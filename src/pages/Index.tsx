@@ -11,11 +11,15 @@ import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 
 function Index() {
-  const [currentMonth, setCurrentMonth] = useState(1);
+  const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
   const [bottomNavTab, setBottomNavTab] = useState('documents');
 
-  const months = ['ABR 25', 'MAI 25', 'JUN 25'];
+  const months = [
+    'JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 
+    'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25',
+    'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'
+  ];
   
   const discounts = [
     {
