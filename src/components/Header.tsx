@@ -14,33 +14,44 @@ export const Header: React.FC<HeaderProps> = ({
   onSettingsClick
 }) => {
   return (
-    <header 
-      className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)]"
-      style={{
-        paddingTop: 'max(env(safe-area-inset-top), 20px)'
-      }}
-    >
-      <div className="flex justify-center items-center w-full px-[21px] h-[60px] max-sm:px-[15px] relative">
-        <button 
-          onClick={onBackClick} 
-          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute left-[21px] max-sm:left-[15px]" 
-          aria-label="Voltar"
-        >
-          <ArrowLeftIcon />
-        </button>
-        
-        <h1 className="text-white text-lg font-bold tracking-normal max-sm:text-base">
-          {title}
-        </h1>
-        
-        <button 
-          onClick={onSettingsClick} 
-          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute right-[21px] max-sm:right-[15px]" 
-          aria-label="Configurações"
-        >
-          <SettingsIcon />
-        </button>
-      </div>
-    </header>
+    <div className="w-full bg-black">
+      {/* Safe area superior */}
+      <div 
+        className="w-full bg-black"
+        style={{
+          height: 'env(safe-area-inset-top, 0px)',
+          minHeight: '0px'
+        }}
+      />
+      
+      <header 
+        className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)]"
+        style={{
+          paddingTop: '20px'
+        }}
+      >
+        <div className="flex justify-center items-center w-full px-[21px] h-[60px] max-sm:px-[15px] relative">
+          <button 
+            onClick={onBackClick} 
+            className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute left-[21px] max-sm:left-[15px]" 
+            aria-label="Voltar"
+          >
+            <ArrowLeftIcon />
+          </button>
+          
+          <h1 className="text-white text-lg font-bold tracking-normal max-sm:text-base">
+            {title}
+          </h1>
+          
+          <button 
+            onClick={onSettingsClick} 
+            className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute right-[21px] max-sm:right-[15px]" 
+            aria-label="Configurações"
+          >
+            <SettingsIcon />
+          </button>
+        </div>
+      </header>
+    </div>
   );
 };
