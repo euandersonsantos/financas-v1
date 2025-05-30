@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DocumentIcon, ChevronRightIcon } from './icons';
 
@@ -28,16 +29,16 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       <div className="flex items-center gap-4 flex-1">
         <DocumentIcon className="w-6 h-6 flex-shrink-0" />
         <div className="flex flex-col items-start">
-          <h3 className="text-[#43464D] font-bold text-base tracking-[0.16px] max-sm:text-sm">
+          <h3 className="text-[#43464D] font-bold text-lg tracking-[0.16px] max-sm:text-base">
             {title}
           </h3>
-          <p className="text-[#5E626C] font-medium text-xs tracking-[0.12px] max-sm:text-[10px]">
+          <p className="text-[#5E626C] font-medium text-sm tracking-[0.12px] max-sm:text-xs">
             {description}
           </p>
         </div>
       </div>
       <div className="flex items-center gap-1">
-        <span className={`text-sm font-extrabold tracking-[0.01em] max-sm:text-xs ${gradientClass}`}>
+        <span className={`text-base font-extrabold tracking-[0.01em] max-sm:text-sm ${gradientClass}`}>
           {amount}
         </span>
         <ChevronRightIcon className="w-6 h-6" />

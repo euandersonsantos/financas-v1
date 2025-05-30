@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BuildingIcon, RefreshIcon } from './icons';
 
@@ -14,7 +15,7 @@ export const CompanyInfo: React.FC<CompanyInfoProps> = ({
     <section className="flex w-full justify-between items-center h-6 px-[21px] py-6 max-sm:px-[15px]">
       <div className="flex items-center gap-2">
         <BuildingIcon className="w-6 h-6" />
-        <span className="text-white text-base font-bold tracking-[0.01em] max-sm:text-sm">
+        <span className="text-white text-lg font-bold tracking-[0.01em] max-sm:text-base">
           {companyName}
         </span>
       </div>

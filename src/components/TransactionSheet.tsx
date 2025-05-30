@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TransactionItem } from './TransactionItem';
 import { PlusIcon } from './icons';
@@ -40,10 +41,10 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
       <div className="flex w-full flex-col items-end gap-6 max-w-[360px]">
         <header className="flex justify-between items-center w-full">
           <div>
-            <h2 className="text-[#43464D] font-bold text-base tracking-[0.01em] max-sm:text-sm">
+            <h2 className="text-[#43464D] font-bold text-lg tracking-[0.01em] max-sm:text-base">
               Lançamentos
             </h2>
-            <p className="text-[#43464D] font-medium text-sm tracking-[0.01em] max-sm:text-xs">
+            <p className="text-[#43464D] font-medium text-base tracking-[0.01em] max-sm:text-sm">
               {month}
             </p>
           </div>
@@ -59,14 +60,14 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
         <div className="flex flex-col items-start gap-6 w-full">
           <div className="flex flex-col items-start gap-[5px] w-full">
             <div className="flex justify-between items-center w-full">
-              <span className="text-[#5E626C] font-medium text-[10px] tracking-[0.1px]">
+              <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                 Entradas
               </span>
               <div className="flex items-center gap-1">
-                <span className="text-[#5E626C] font-medium text-[10px] tracking-[0.1px]">
+                <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                   Total
                 </span>
-                <span className="text-[#5E626C] font-bold text-[10px] tracking-[0.1px]">
+                <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
                   {incomeTotal}
                 </span>
               </div>
@@ -89,14 +90,14 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           
           <div className="flex flex-col items-start gap-[5px] w-full">
             <div className="flex justify-between items-center w-full">
-              <span className="text-[#5E626C] font-medium text-[10px] tracking-[0.1px]">
+              <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                 Saídas
               </span>
               <div className="flex items-center gap-1">
-                <span className="text-[#5E626C] font-medium text-[10px] tracking-[0.1px]">
+                <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                   Total
                 </span>
-                <span className="text-[#5E626C] font-bold text-[10px] tracking-[0.1px]">
+                <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
                   {expenseTotal}
                 </span>
               </div>
@@ -119,7 +120,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           
           <div className="flex flex-col items-start gap-[5px] w-full">
             <div className="flex justify-between items-center w-full">
-              <span className="text-[#5E626C] font-medium text-[10px] tracking-[0.1px]">
+              <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                 Resultado
               </span>
               <div className="flex w-0 h-3 items-center gap-1" />
@@ -130,10 +131,10 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           <div className="flex justify-center items-start gap-4 w-full px-[1.5px] py-0 sm:gap-8">
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
-                <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
+                <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
                   Entrada
                 </span>
-                <span className="font-bold text-sm tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-xs">
+                <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                   {entryTotal}
                 </span>
               </div>
@@ -141,10 +142,10 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
-                <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
+                <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
                   Saída
                 </span>
-                <span className="font-bold text-sm tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-xs">
+                <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                   {exitTotal}
                 </span>
               </div>
@@ -152,10 +153,10 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
-                <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
+                <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
                   Saldo
                 </span>
-                <span className="font-bold text-sm tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-xs">
+                <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                   {balance}
                 </span>
               </div>

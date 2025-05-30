@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header 
       className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)] pt-safe"
       style={{
-        paddingTop: 'env(safe-area-inset-top, 0px)'
+        paddingTop: 'env(safe-area-inset-top, 20px)'
       }}
     >
       <div className="flex justify-between items-center w-full px-[21px] h-[60px] max-sm:px-[15px]">

@@ -96,8 +96,18 @@
     @apply border-border;
   }
 
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* iOS PWA specific styles */
@@ -122,5 +132,16 @@
   
   #root {
     background-color: #000000;
+  }
+}
+
+/* Melhorar legibilidade no mobile */
+@media (max-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+  
+  body {
+    font-size: 16px;
   }
 }

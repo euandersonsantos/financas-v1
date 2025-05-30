@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DiscountCard } from './DiscountCard';
 
@@ -20,7 +21,7 @@ export const DiscountGrid: React.FC<DiscountGridProps> = ({
 }) => {
   return (
     <section className="flex flex-col justify-center items-start gap-4 w-full">
-      <h2 className="text-[#43464D] font-bold text-sm tracking-[0.14px] max-sm:text-xs">
+      <h2 className="text-[#43464D] font-bold text-base tracking-[0.14px] max-sm:text-sm">
         {title}
       </h2>
       <div className="flex h-[232px] items-start gap-2 flex-wrap w-full max-sm:h-auto">
