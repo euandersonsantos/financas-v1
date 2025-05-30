@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { CompanyInfo } from "@/components/CompanyInfo";
@@ -109,7 +108,7 @@ function Index() {
   };
 
   return (
-    <div className="w-full max-w-[402px] bg-black min-h-screen relative mx-auto font-['Urbanist']">
+    <div className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden">
       <Header 
         title="Gestão fiscal"
         onBackClick={() => console.log('Back clicked')}
@@ -128,6 +127,7 @@ function Index() {
             viewBox="0 0 402 1400" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
           >
             <path 
               d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" 
@@ -156,7 +156,7 @@ function Index() {
           </svg>
         </div>
         
-        <div className="absolute w-full flex flex-col items-center gap-3 px-[21px] left-0 top-6 max-sm:px-[15px]">
+        <div className="absolute w-full flex flex-col items-center gap-3 px-4 left-0 top-6 sm:px-[21px]">
           <MonthNavigation 
             months={months}
             currentMonth={currentMonth}
@@ -165,7 +165,7 @@ function Index() {
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
-        <div className="absolute w-[360px] flex flex-col items-start gap-10 left-[21px] top-[110px] max-sm:w-[calc(100%-42px)] max-sm:left-[15px]">
+        <div className="absolute w-full flex flex-col items-start gap-10 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
           <TabNavigation 
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -177,7 +177,7 @@ function Index() {
             comparisonText="em relação ao mês anterior"
           />
           
-          <div className="pb-8">
+          <div className="pb-8 w-full">
             <DiscountGrid 
               title="Principais descontos"
               discounts={discounts}

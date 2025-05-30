@@ -36,8 +36,8 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   onTransactionClick
 }) => {
   return (
-    <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-[21px] rounded-[24px_24px_0px_0px] left-0 bottom-[82px] max-sm:pt-5 max-sm:pb-[100px] max-sm:px-[15px] z-10">
-      <div className="flex w-[360px] flex-col items-end gap-6 max-sm:w-full">
+    <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-4 rounded-[24px_24px_0px_0px] left-0 bottom-[82px] z-10 sm:px-[21px]">
+      <div className="flex w-full flex-col items-end gap-6 max-w-[360px]">
         <header className="flex justify-between items-center w-full">
           <div>
             <h2 className="text-[#43464D] font-bold text-base tracking-[0.01em] max-sm:text-sm">
@@ -127,7 +127,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
           </div>
           
-          <div className="flex justify-center items-start gap-8 w-full px-[1.5px] py-0 max-sm:gap-4">
+          <div className="flex justify-center items-start gap-4 w-full px-[1.5px] py-0 sm:gap-8">
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
                 <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
@@ -138,7 +138,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 </span>
               </div>
             </div>
-            <div className="w-9 h-0 bg-[rgba(0,0,0,0.08)] max-sm:w-5" />
+            <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
                 <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
@@ -149,7 +149,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 </span>
               </div>
             </div>
-            <div className="w-9 h-0 bg-[rgba(0,0,0,0.08)] max-sm:w-5" />
+            <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
                 <span className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
