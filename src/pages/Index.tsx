@@ -121,11 +121,11 @@ function Index() {
         onRefreshClick={() => console.log('Refresh clicked')}
       />
       
-      <main className="w-full h-[1400px] relative">
-        <div className="w-full h-full relative">
+      <main className="w-full relative">
+        <div className="w-full h-[620px] relative">
           <svg 
             className="w-full h-full absolute inset-0" 
-            viewBox="0 0 402 1400" 
+            viewBox="0 0 402 620" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -134,7 +134,7 @@ function Index() {
               fill="url(#paint0_linear_background)"
             />
             <path 
-              d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V1400H0V31.5439Z" 
+              d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V620H0V31.5439Z" 
               fill="#F5F5F5"
             />
             <defs>
@@ -156,7 +156,7 @@ function Index() {
           </svg>
         </div>
         
-        <div className="absolute w-full flex flex-col items-center gap-3 px-[21px] left-0 top-6 max-sm:px-[15px]">
+        <div className="absolute w-full flex flex-col items-center gap-2 px-[21px] left-0 top-5 max-sm:px-[15px]">
           <MonthNavigation 
             months={months}
             currentMonth={currentMonth}
@@ -165,7 +165,7 @@ function Index() {
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
-        <div className="absolute w-[360px] flex flex-col items-start gap-10 left-[21px] top-[110px] max-sm:w-[calc(100%-42px)] max-sm:left-[15px]">
+        <div className="absolute w-[360px] flex flex-col items-start gap-10 left-[21px] top-[110px] max-sm:w-[calc(100%-42px)] max-sm:left-[15px] pb-8">
           <TabNavigation 
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -186,18 +186,20 @@ function Index() {
         </div>
       </main>
       
-      <TransactionSheet 
-        month="Maio 2025"
-        incomeTotal="R$ 10,500,00"
-        expenseTotal="R$ 4.017,18"
-        incomeTransactions={incomeTransactions}
-        expenseTransactions={expenseTransactions}
-        entryTotal="R$ 10.500,00"
-        exitTotal="R$ 4.017,18"
-        balance="R$ 6.482,82"
-        onAddTransaction={handleAddTransaction}
-        onTransactionClick={handleTransactionClick}
-      />
+      <div className="relative mt-8">
+        <TransactionSheet 
+          month="Maio 2025"
+          incomeTotal="R$ 10,500,00"
+          expenseTotal="R$ 4.017,18"
+          incomeTransactions={incomeTransactions}
+          expenseTransactions={expenseTransactions}
+          entryTotal="R$ 10.500,00"
+          exitTotal="R$ 4.017,18"
+          balance="R$ 6.482,82"
+          onAddTransaction={handleAddTransaction}
+          onTransactionClick={handleTransactionClick}
+        />
+      </div>
       
       <BottomNavigation 
         activeTab={bottomNavTab}

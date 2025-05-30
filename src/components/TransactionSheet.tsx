@@ -36,7 +36,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   onTransactionClick
 }) => {
   return (
-    <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-[21px] rounded-[24px_24px_0px_0px] left-0 bottom-[82px] max-sm:pt-5 max-sm:pb-[100px] max-sm:px-[15px] z-10">
+    <section className="w-full flex flex-col items-center bg-white h-[654px] pt-6 pb-[122px] px-[21px] rounded-[24px_24px_0px_0px] max-sm:pt-5 max-sm:pb-[100px] max-sm:px-[15px] mt-8">
       <div className="flex w-[360px] flex-col items-end gap-6 max-sm:w-full">
         <header className="flex justify-between items-center w-full">
           <div>
