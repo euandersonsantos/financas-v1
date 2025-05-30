@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { CompanyInfo } from "@/components/CompanyInfo";
@@ -108,7 +109,7 @@ function Index() {
   };
 
   return (
-    <div className="w-full max-w-[402px] bg-black min-h-screen relative mx-auto">
+    <div className="w-full max-w-[402px] bg-black min-h-screen relative mx-auto font-sans">
       <Header 
         title="Gestão fiscal"
         onBackClick={() => console.log('Back clicked')}
@@ -120,11 +121,11 @@ function Index() {
         onRefreshClick={() => console.log('Refresh clicked')}
       />
       
-      <main className="w-full h-[1245px] relative">
+      <main className="w-full h-[1400px] relative">
         <div className="w-full h-full relative">
           <svg 
             className="w-full h-full absolute inset-0" 
-            viewBox="0 0 402 1245" 
+            viewBox="0 0 402 1400" 
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -133,7 +134,7 @@ function Index() {
               fill="url(#paint0_linear_background)"
             />
             <path 
-              d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V1245H0V31.5439Z" 
+              d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V1400H0V31.5439Z" 
               fill="#F5F5F5"
             />
             <defs>
@@ -155,7 +156,7 @@ function Index() {
           </svg>
         </div>
         
-        <div className="absolute w-full flex flex-col items-center gap-2 px-[21px] left-0 top-5 max-sm:px-[15px]">
+        <div className="absolute w-full flex flex-col items-center gap-3 px-[21px] left-0 top-6 max-sm:px-[15px]">
           <MonthNavigation 
             months={months}
             currentMonth={currentMonth}
@@ -164,7 +165,7 @@ function Index() {
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
-        <div className="absolute w-[360px] flex flex-col items-start gap-8 left-[21px] top-[95px] max-sm:w-[calc(100%-42px)] max-sm:left-[15px]">
+        <div className="absolute w-[360px] flex flex-col items-start gap-10 left-[21px] top-[110px] max-sm:w-[calc(100%-42px)] max-sm:left-[15px]">
           <TabNavigation 
             activeTab={activeTab}
             onTabChange={handleTabChange}
@@ -176,10 +177,12 @@ function Index() {
             comparisonText="em relação ao mês anterior"
           />
           
-          <DiscountGrid 
-            title="Principais descontos"
-            discounts={discounts}
-          />
+          <div className="pb-8">
+            <DiscountGrid 
+              title="Principais descontos"
+              discounts={discounts}
+            />
+          </div>
         </div>
       </main>
       

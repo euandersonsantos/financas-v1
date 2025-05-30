@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowCircleLeftIcon, ArrowCircleRightIcon } from './icons';
 
@@ -35,7 +36,7 @@ export const MonthNavigation: React.FC<MonthNavigationProps> = ({
         <ArrowCircleLeftIcon />
       </button>
       
-      <div className="flex items-center gap-10 max-sm:gap-5">
+      <div className="flex items-center gap-12 max-sm:gap-8">
         {months.map((month, index) => {
           const isActive = index === currentMonth;
           const isAdjacent = Math.abs(index - currentMonth) === 1;
@@ -47,9 +48,9 @@ export const MonthNavigation: React.FC<MonthNavigationProps> = ({
             <button
               key={month}
               onClick={() => onMonthChange(index)}
-              className={`${
+              className={`whitespace-nowrap ${
                 isActive
-                  ? 'flex justify-center items-center gap-2.5 px-3 py-2 rounded-[50px] font-black text-base tracking-[0.16px] bg-[clip-text] max-sm:text-sm'
+                  ? 'flex justify-center items-center gap-2.5 px-4 py-2 rounded-[50px] font-black text-base tracking-[0.16px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm'
                   : 'text-[#6F7480] font-medium text-sm tracking-[0.14px] max-sm:text-xs'
               }`}
             >
