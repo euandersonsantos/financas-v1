@@ -14,8 +14,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSettingsClick 
 }) => {
   return (
-    <header className="w-full h-[116px] bg-black relative border-b border-[rgba(255,255,255,0.16)] safe-area-inset-top">
-      <div className="flex justify-between items-center absolute w-full px-[21px] h-6 top-[61px] max-sm:px-[15px]">
+    <header className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)] pt-safe pb-4" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex justify-between items-center w-full px-[21px] h-6 mt-[61px] max-sm:px-[15px]">
         <button 
           onClick={onBackClick}
           className="w-6 h-6 flex-shrink-0 z-10"

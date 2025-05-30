@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,5 +98,29 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* iOS PWA specific styles */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      padding-top: env(safe-area-inset-top);
+      background-color: #000000;
+    }
+    
+    #root {
+      min-height: calc(100vh - env(safe-area-inset-top));
+      background-color: #000000;
+    }
+  }
+}
+
+/* Ensure the viewport extends to the status bar area */
+@media (display-mode: standalone) {
+  body {
+    background-color: #000000;
+  }
+  
+  #root {
+    background-color: #000000;
   }
 }
