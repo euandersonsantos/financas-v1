@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface RevenueSummaryProps {
@@ -17,7 +18,7 @@ export const RevenueSummary: React.FC<RevenueSummaryProps> = ({
         <h2 className="text-[#43464D] font-medium text-sm tracking-[0.14px] max-sm:text-xs">
           Total faturamento
         </h2>
-        <div className="font-black text-[40px] tracking-[0.4px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-[32px]">
+        <div className="font-black text-[40px] tracking-[0.4px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-[32px] whitespace-nowrap">
           {totalRevenue}
         </div>
         <p className="text-[#5E626C] font-medium text-xs tracking-[0.12px] max-sm:text-[10px]">

@@ -109,7 +109,7 @@ function Index() {
   };
 
   return (
-    <div className="w-full max-w-[402px] bg-black min-h-screen relative mx-auto font-sans">
+    <div className="w-full max-w-[402px] bg-black min-h-screen relative mx-auto font-['Urbanist']">
       <Header 
         title="Gestão fiscal"
         onBackClick={() => console.log('Back clicked')}
