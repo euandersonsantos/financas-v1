@@ -7,6 +7,8 @@ import { RevenueSummary } from "@/components/RevenueSummary";
 import { DiscountGrid } from "@/components/DiscountGrid";
 import { TransactionSheet } from "@/components/TransactionSheet";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 
 function Index() {
   const [currentMonth, setCurrentMonth] = useState(1);
@@ -107,8 +109,30 @@ function Index() {
     console.log('Transaction clicked:', transaction);
   };
 
+  const handleRefresh = async () => {
+    console.log('Refreshing data...');
+    // Simular carregamento
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log('Data refreshed!');
+  };
+
+  const { scrollableRef, isRefreshing, pullDistance, shouldShowIndicator } = usePullToRefresh({
+    onRefresh: handleRefresh,
+    threshold: 80
+  });
+
   return (
-    <div className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden">
+    <div 
+      ref={scrollableRef}
+      className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto"
+    >
+      <PullToRefreshIndicator
+        isVisible={shouldShowIndicator}
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        threshold={80}
+      />
+      
       <Header 
         title="Gestão fiscal"
         onBackClick={() => console.log('Back clicked')}
