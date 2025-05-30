@@ -14,20 +14,21 @@ export const Header: React.FC<HeaderProps> = ({
   onSettingsClick
 }) => {
   return (
-    <div className="w-full bg-black">
-      {/* Safe area superior */}
+    <div className="w-full bg-black fixed top-0 left-0 right-0 z-50">
+      {/* Safe area superior com fundo preto */}
       <div 
         className="w-full bg-black"
         style={{
           height: 'env(safe-area-inset-top, 0px)',
-          minHeight: '0px'
+          backgroundColor: '#000000'
         }}
       />
       
       <header 
         className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)]"
         style={{
-          paddingTop: '20px'
+          paddingTop: '20px',
+          backgroundColor: '#000000'
         }}
       >
         <div className="flex justify-center items-center w-full px-[21px] h-[60px] max-sm:px-[15px] relative">

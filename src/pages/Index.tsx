@@ -126,111 +126,117 @@ function Index() {
   });
 
   return (
-    <div 
-      ref={scrollableRef}
-      className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto"
-    >
-      <PullToRefreshIndicator
-        isVisible={shouldShowIndicator}
-        isRefreshing={isRefreshing}
-        pullDistance={pullDistance}
-        threshold={80}
-      />
-      
+    <div className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden">
       <Header 
         title="Gestão fiscal"
         onBackClick={() => console.log('Back clicked')}
         onSettingsClick={() => console.log('Settings clicked')}
       />
       
-      <CompanyInfo 
-        companyName="Anderson Design"
-        onRefreshClick={() => console.log('Refresh clicked')}
-      />
-      
-      <main className="w-full h-[1400px] relative">
-        <div className="w-full h-full relative">
-          <svg 
-            className="w-full h-full absolute inset-0" 
-            viewBox="0 0 402 1400" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            <path 
-              d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" 
-              fill="url(#paint0_linear_background)"
-            />
-            <path 
-              d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V1400H0V31.5439Z" 
-              fill="#F5F5F5"
-            />
-            <defs>
-              <linearGradient 
-                id="paint0_linear_background" 
-                x1="-48" 
-                y1="630" 
-                x2="448.486" 
-                y2="632.664" 
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="#7A3E69" />
-                <stop offset="0.269231" stopColor="#303E74" stopOpacity="0.9" />
-                <stop offset="0.490385" stopColor="#72CE9F" stopOpacity="0.7" />
-                <stop offset="0.711538" stopColor="#EAA124" />
-                <stop offset="1" stopColor="#907EEF" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
+      <div 
+        ref={scrollableRef}
+        className="overflow-y-auto"
+        style={{
+          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 80px)',
+          height: '100vh'
+        }}
+      >
+        <PullToRefreshIndicator
+          isVisible={shouldShowIndicator}
+          isRefreshing={isRefreshing}
+          pullDistance={pullDistance}
+          threshold={80}
+        />
         
-        <div className="absolute w-full flex flex-col items-center gap-3 px-4 left-0 top-6 sm:px-[21px]">
-          <MonthNavigation 
-            months={months}
-            currentMonth={currentMonth}
-            onMonthChange={handleMonthChange}
-          />
-          <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
-        </div>
+        <CompanyInfo 
+          companyName="Anderson Design"
+          onRefreshClick={() => console.log('Refresh clicked')}
+        />
         
-        <div className="absolute w-full flex flex-col items-start gap-10 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
-          <TabNavigation 
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
-          
-          <RevenueSummary 
-            totalRevenue="R$ 10.500,00"
-            percentageChange={0}
-            comparisonText="em relação ao mês anterior"
-          />
-          
-          <div className="pb-8 w-full">
-            <DiscountGrid 
-              title="Principais descontos"
-              discounts={discounts}
-            />
+        <main className="w-full h-[1400px] relative">
+          <div className="w-full h-full relative">
+            <svg 
+              className="w-full h-full absolute inset-0" 
+              viewBox="0 0 402 1400" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+            >
+              <path 
+                d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" 
+                fill="url(#paint0_linear_background)"
+              />
+              <path 
+                d="M0 31.5439C0 18.478 10.7452 7.88599 24 7.88599H378C391.255 7.88599 402 18.478 402 31.5439V1400H0V31.5439Z" 
+                fill="#F5F5F5"
+              />
+              <defs>
+                <linearGradient 
+                  id="paint0_linear_background" 
+                  x1="-48" 
+                  y1="630" 
+                  x2="448.486" 
+                  y2="632.664" 
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#7A3E69" />
+                  <stop offset="0.269231" stopColor="#303E74" stopOpacity="0.9" />
+                  <stop offset="0.490385" stopColor="#72CE9F" stopOpacity="0.7" />
+                  <stop offset="0.711538" stopColor="#EAA124" />
+                  <stop offset="1" stopColor="#907EEF" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-        </div>
-      </main>
-      
-      <TransactionSheet 
-        month="Maio 2025"
-        incomeTotal="R$ 10,500,00"
-        expenseTotal="R$ 4.017,18"
-        incomeTransactions={incomeTransactions}
-        expenseTransactions={expenseTransactions}
-        entryTotal="R$ 10.500,00"
-        exitTotal="R$ 4.017,18"
-        balance="R$ 6.482,82"
-        onAddTransaction={handleAddTransaction}
-        onTransactionClick={handleTransactionClick}
-      />
-      
-      <BottomNavigation 
-        activeTab={bottomNavTab}
-        onTabChange={handleBottomNavChange}
-      />
+          
+          <div className="absolute w-full flex flex-col items-center gap-3 px-4 left-0 top-6 sm:px-[21px]">
+            <MonthNavigation 
+              months={months}
+              currentMonth={currentMonth}
+              onMonthChange={handleMonthChange}
+            />
+            <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
+          </div>
+          
+          <div className="absolute w-full flex flex-col items-start gap-10 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
+            <TabNavigation 
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+            />
+            
+            <RevenueSummary 
+              totalRevenue="R$ 10.500,00"
+              percentageChange={0}
+              comparisonText="em relação ao mês anterior"
+            />
+            
+            <div className="pb-8 w-full">
+              <DiscountGrid 
+                title="Principais descontos"
+                discounts={discounts}
+              />
+            </div>
+          </div>
+        </main>
+        
+        <TransactionSheet 
+          month="Maio 2025"
+          incomeTotal="R$ 10,500,00"
+          expenseTotal="R$ 4.017,18"
+          incomeTransactions={incomeTransactions}
+          expenseTransactions={expenseTransactions}
+          entryTotal="R$ 10.500,00"
+          exitTotal="R$ 4.017,18"
+          balance="R$ 6.482,82"
+          onAddTransaction={handleAddTransaction}
+          onTransactionClick={handleTransactionClick}
+        />
+        
+        <BottomNavigation 
+          activeTab={bottomNavTab}
+          onTabChange={handleBottomNavChange}
+        />
+      </div>
     </div>
   );
 }
