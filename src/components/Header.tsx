@@ -15,27 +15,27 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header 
-      className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)] pt-safe"
+      className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)]"
       style={{
-        paddingTop: 'env(safe-area-inset-top, 20px)'
+        paddingTop: 'max(env(safe-area-inset-top), 20px)'
       }}
     >
-      <div className="flex justify-between items-center w-full px-[21px] h-[60px] max-sm:px-[15px]">
+      <div className="flex justify-center items-center w-full px-[21px] h-[60px] max-sm:px-[15px] relative">
         <button 
           onClick={onBackClick} 
-          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center" 
+          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute left-[21px] max-sm:left-[15px]" 
           aria-label="Voltar"
         >
           <ArrowLeftIcon />
         </button>
         
-        <h1 className="text-white text-lg font-bold tracking-normal max-sm:text-base flex-1 text-center">
+        <h1 className="text-white text-lg font-bold tracking-normal max-sm:text-base">
           {title}
         </h1>
         
         <button 
           onClick={onSettingsClick} 
-          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center" 
+          className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute right-[21px] max-sm:right-[15px]" 
           aria-label="Configurações"
         >
           <SettingsIcon />
