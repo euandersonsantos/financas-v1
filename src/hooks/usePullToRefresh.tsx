@@ -16,7 +16,7 @@ export const usePullToRefresh = ({
   const [pullDistance, setPullDistance] = useState(0);
   const [canPull, setCanPull] = useState(false);
   const touchStartY = useRef(0);
-  const scrollableRef = useRef<HTMLElement>(null);
+  const scrollableRef = useRef<HTMLDivElement>(null);
 
   const handleTouchStart = (e: TouchEvent) => {
     if (scrollableRef.current && scrollableRef.current.scrollTop === 0) {
