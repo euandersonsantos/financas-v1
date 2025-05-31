@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-
 interface TransactionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,7 +15,6 @@ interface TransactionEditModalProps {
   } | null;
   onSave: (transaction: any) => void;
 }
-
 export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   isOpen,
   onClose,
@@ -40,7 +37,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     });
     return `R$ ${formatted}`;
   };
-
   const formatCurrencyDisplay = (cents: string) => {
     const numericValue = parseInt(cents) / 100;
     return numericValue.toLocaleString('pt-BR', {
@@ -48,24 +44,20 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       maximumFractionDigits: 2
     });
   };
-
   const calculatePercentage = () => {
     const totalRevenue = 10500; // Based on the mock data
     const amountValue = parseInt(amount) / 100;
-    return ((amountValue / totalRevenue) * 100).toFixed(1);
+    return (amountValue / totalRevenue * 100).toFixed(1);
   };
-
   const calculateDifference = () => {
     const originalValue = parseInt(amount);
     const newValueInt = parseInt(newValue);
     const difference = newValueInt - originalValue;
     return Math.abs(difference);
   };
-
   const handleContinue = () => {
     setCurrentScreen('value');
   };
-
   const handleBack = () => {
     if (currentScreen === 'value') {
       setCurrentScreen('edit');
@@ -73,7 +65,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       onClose();
     }
   };
-
   const handleSave = () => {
     const updatedTransaction = {
       ...transaction,
@@ -84,38 +75,29 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     onSave(updatedTransaction);
     onClose();
   };
-
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, '');
     setNewValue(value);
   };
-
   if (!isOpen || !transaction) return null;
-
-  return (
-    <div className="fixed inset-0 z-[60] bg-black/50" onClick={handleBack}>
-      <div 
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 animate-slide-in-bottom z-[61]"
-        onClick={(e) => e.stopPropagation()}
-      >
+  return <div className="fixed inset-0 z-[60] bg-black/50" onClick={handleBack}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 animate-slide-in-bottom z-[61]" onClick={e => e.stopPropagation()}>
         {/* Header with Progress Bar */}
         <div className="flex items-center justify-between mb-6">
           <button onClick={handleBack} className="p-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-700">
-              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor" />
             </svg>
           </button>
           <div className="relative w-32 h-1 bg-[#ECECEC] rounded-sm overflow-hidden">
-            <div 
-              className="absolute top-0 left-0 h-full rounded-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4]" 
-              style={{ width: currentScreen === 'edit' ? '50%' : '100%' }}
-            />
+            <div className="absolute top-0 left-0 h-full rounded-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4]" style={{
+            width: currentScreen === 'edit' ? '50%' : '100%'
+          }} />
           </div>
           <div className="w-6"></div>
         </div>
 
-        {currentScreen === 'edit' ? (
-          <>
+        {currentScreen === 'edit' ? <>
             {/* Title and Transaction Info */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
               Editar lançamento - Março 2025
@@ -127,7 +109,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             <p className="text-gray-500 text-xs">100% do faturamento</p>
 
             {/* Dashed Border Section */}
-            <div className="border-t border-b border-dashed border-gray-200 my-6 py-4 -mx-4 px-4">
+            <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-[16px] my-[24px]">
               <div className="flex justify-between items-center mb-3">
                 <p className="text-sm text-gray-600 font-semibold">Valor total do faturamento</p>
                 <p className="text-sm text-gray-800 font-medium">R$ 10.500,00</p>
@@ -156,18 +138,18 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                       </div>
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
-                      {Array.from({ length: 31 }, (_, i) => (
-                        <SelectItem key={i + 1} value={String(i + 1)}>
+                      {Array.from({
+                    length: 31
+                  }, (_, i) => <SelectItem key={i + 1} value={String(i + 1)}>
                           Dia {i + 1}
-                        </SelectItem>
-                      ))}
+                        </SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               {/* Recurrence */}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-[32px]">
                 <p className="text-sm text-gray-600 font-semibold">Recorrência</p>
                 <div className="flex items-center">
                   <Select value={recurrence} onValueChange={setRecurrence}>
@@ -189,15 +171,10 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
 
             {/* Continue Button */}
-            <Button 
-              onClick={handleContinue}
-              className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-            >
+            <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2">
               Continuar
             </Button>
-          </>
-        ) : (
-          <>
+          </> : <>
             {/* Value Edit Screen */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
               Editar o valor do Pró-labore
@@ -206,18 +183,12 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
             {/* Value Input */}
             <div className="mb-6">
-              <Input
-                type="text"
-                value={`R$ ${formatCurrencyDisplay(newValue)}`}
-                onChange={handleValueChange}
-                className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-gray-400 focus:ring-0 bg-transparent"
-                style={{
-                  background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}
-              />
+              <Input type="text" value={`R$ ${formatCurrencyDisplay(newValue)}`} onChange={handleValueChange} className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-gray-400 focus:ring-0 bg-transparent" style={{
+            background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }} />
             </div>
 
             {/* Comparison Section */}
@@ -247,15 +218,10 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
 
             {/* Save Button */}
-            <Button 
-              onClick={handleSave}
-              className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-            >
+            <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2">
               Salvar
             </Button>
-          </>
-        )}
+          </>}
       </div>
-    </div>
-  );
+    </div>;
 };
