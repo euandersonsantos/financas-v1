@@ -14,11 +14,13 @@ interface DiscountItem {
 interface DiscountGridProps {
   title: string;
   discounts: DiscountItem[];
+  onDiscountClick?: (discount: DiscountItem) => void;
 }
 
 export const DiscountGrid: React.FC<DiscountGridProps> = ({
   title,
-  discounts
+  discounts,
+  onDiscountClick
 }) => {
   return (
     <section className="flex flex-col justify-center items-start gap-4 w-full">
@@ -34,6 +36,7 @@ export const DiscountGrid: React.FC<DiscountGridProps> = ({
             description={discount.description}
             fontWeight={discount.fontWeight}
             type={discount.type}
+            onClick={() => onDiscountClick?.(discount)}
           />
         ))}
       </div>

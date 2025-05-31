@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface DiscountCardProps {
@@ -7,6 +6,7 @@ interface DiscountCardProps {
   description: string;
   fontWeight?: 'bold' | 'extrabold';
   type?: 'income' | 'expense';
+  onClick?: () => void;
 }
 
 export const DiscountCard: React.FC<DiscountCardProps> = ({
@@ -14,14 +14,18 @@ export const DiscountCard: React.FC<DiscountCardProps> = ({
   amount,
   description,
   fontWeight = 'bold',
-  type = 'expense'
+  type = 'expense',
+  onClick
 }) => {
   const gradientClass = type === 'income' 
     ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
     : 'bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent';
 
   return (
-    <article className="flex w-44 h-28 flex-col items-start gap-2.5 bg-[#FDFDFD] shadow-[0px_2px_4px_0px_rgba(0,0,0,0.05)] px-[18px] py-[25px] rounded-xl max-sm:w-[calc(50%-4px)] max-sm:h-auto max-sm:px-[15px] max-sm:py-5">
+    <article 
+      className={`flex w-44 h-28 flex-col items-start gap-2.5 bg-[#FDFDFD] shadow-[0px_2px_4px_0px_rgba(0,0,0,0.05)] px-[18px] py-[25px] rounded-xl max-sm:w-[calc(50%-4px)] max-sm:h-auto max-sm:px-[15px] max-sm:py-5 ${onClick ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex flex-col justify-center items-start gap-2">
         <div className="flex flex-col items-start">
           <h3 className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm whitespace-nowrap">

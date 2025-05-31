@@ -9,10 +9,14 @@ import { TransactionSheet } from "@/components/TransactionSheet";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { TransactionEditModal } from "@/components/TransactionEditModal";
+
 function Index() {
   const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
   const [bottomNavTab, setBottomNavTab] = useState('documents');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
   const discounts = [{
     id: '1',
@@ -87,8 +91,27 @@ function Index() {
   const handleAddTransaction = () => {
     console.log('Add transaction clicked');
   };
+  const handleDiscountClick = (discount: any) => {
+    // Convert discount to transaction format for the modal
+    const transactionFromDiscount = {
+      id: discount.id,
+      title: discount.title,
+      amount: discount.amount,
+      description: discount.description,
+      type: discount.type
+    };
+    setSelectedTransaction(transactionFromDiscount);
+    setIsEditModalOpen(true);
+    console.log('Discount clicked:', discount);
+  };
   const handleTransactionClick = (transaction: any) => {
+    setSelectedTransaction(transaction);
+    setIsEditModalOpen(true);
     console.log('Transaction clicked:', transaction);
+  };
+  const handleSaveTransaction = (updatedTransaction: any) => {
+    console.log('Transaction saved:', updatedTransaction);
+    setIsEditModalOpen(false);
   };
   const handleRefresh = async () => {
     console.log('Refreshing data...');
@@ -142,14 +165,36 @@ function Index() {
           <RevenueSummary totalRevenue="R$ 10.500,00" percentageChange={0} comparisonText="em relação ao mês anterior" />
           
           <div className="pb-8 w-full">
-            <DiscountGrid title="Principais descontos" discounts={discounts} />
+            <DiscountGrid 
+              title="Principais descontos" 
+              discounts={discounts} 
+              onDiscountClick={handleDiscountClick}
+            />
           </div>
         </div>
       </main>
       
-      <TransactionSheet month="Maio 2025" incomeTotal="R$ 10,500,00" expenseTotal="R$ 4.017,18" incomeTransactions={incomeTransactions} expenseTransactions={expenseTransactions} entryTotal="R$ 10.500,00" exitTotal="R$ 4.017,18" balance="R$ 6.482,82" onAddTransaction={handleAddTransaction} onTransactionClick={handleTransactionClick} />
+      <TransactionSheet 
+        month="Maio 2025" 
+        incomeTotal="R$ 10,500,00" 
+        expenseTotal="R$ 4.017,18" 
+        incomeTransactions={incomeTransactions} 
+        expenseTransactions={expenseTransactions} 
+        entryTotal="R$ 10.500,00" 
+        exitTotal="R$ 4.017,18" 
+        balance="R$ 6.482,82" 
+        onAddTransaction={handleAddTransaction} 
+        onTransactionClick={handleTransactionClick} 
+      />
       
       <BottomNavigation activeTab={bottomNavTab} onTabChange={handleBottomNavChange} />
+
+      <TransactionEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        transaction={selectedTransaction}
+        onSave={handleSaveTransaction}
+      />
     </div>;
 }
 export default Index;

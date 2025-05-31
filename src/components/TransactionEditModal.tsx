@@ -64,9 +64,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   if (!isOpen || !transaction) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] bg-black/50" onClick={onClose}>
       <div 
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-6 animate-slide-in-bottom"
+        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-6 animate-slide-in-bottom z-[61]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Progress Bar */}
