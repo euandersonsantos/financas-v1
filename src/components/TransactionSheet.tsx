@@ -1,7 +1,6 @@
 import React from 'react';
 import { TransactionItem } from './TransactionItem';
 import { PlusIcon } from './icons';
-
 interface Transaction {
   id: string;
   title: string;
@@ -9,7 +8,6 @@ interface Transaction {
   amount: string;
   type: 'income' | 'expense';
 }
-
 interface TransactionSheetProps {
   month: string;
   incomeTotal: string;
@@ -22,7 +20,6 @@ interface TransactionSheetProps {
   onAddTransaction?: () => void;
   onTransactionClick?: (transaction: Transaction) => void;
 }
-
 export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   month,
   incomeTotal,
@@ -35,8 +32,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   onAddTransaction,
   onTransactionClick
 }) => {
-  return (
-    <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-4 rounded-[24px_24px_0px_0px] left-0 bottom-[82px] z-10 sm:px-[21px]">
+  return <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-4 rounded-[24px_24px_0px_0px] left-0 bottom-[82px] z-10 sm:px-[21px]">
       <div className="flex w-full flex-col items-end gap-6 max-w-[360px]">
         <header className="flex justify-between items-center w-full">
           <div>
@@ -47,11 +43,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
               {month}
             </p>
           </div>
-          <button
-            onClick={onAddTransaction}
-            className="w-10 h-10 flex items-center justify-center"
-            aria-label="Adicionar lançamento"
-          >
+          <button onClick={onAddTransaction} className="w-10 h-10 flex items-center justify-center" aria-label="Adicionar lançamento">
             <PlusIcon className="w-10 h-10" />
           </button>
         </header>
@@ -75,16 +67,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           </div>
           
           <div className="flex flex-col gap-4 w-full">
-            {incomeTransactions.map((transaction) => (
-              <TransactionItem
-                key={transaction.id}
-                title={transaction.title}
-                description={transaction.description}
-                amount={transaction.amount}
-                type={transaction.type}
-                onClick={() => onTransactionClick?.(transaction)}
-              />
-            ))}
+            {incomeTransactions.map(transaction => <TransactionItem key={transaction.id} title={transaction.title} description={transaction.description} amount={transaction.amount} type={transaction.type} onClick={() => onTransactionClick?.(transaction)} />)}
           </div>
           
           <div className="flex flex-col items-start gap-[5px] w-full">
@@ -105,16 +88,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           </div>
           
           <div className="flex flex-col gap-4 w-full">
-            {expenseTransactions.map((transaction) => (
-              <TransactionItem
-                key={transaction.id}
-                title={transaction.title}
-                description={transaction.description}
-                amount={transaction.amount}
-                type={transaction.type}
-                onClick={() => onTransactionClick?.(transaction)}
-              />
-            ))}
+            {expenseTransactions.map(transaction => <TransactionItem key={transaction.id} title={transaction.title} description={transaction.description} amount={transaction.amount} type={transaction.type} onClick={() => onTransactionClick?.(transaction)} />)}
           </div>
           
           <div className="flex flex-col items-start gap-[5px] w-full">
@@ -127,7 +101,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
           </div>
           
-          <div className="flex justify-center items-start gap-4 w-full px-[1.5px] py-0 sm:gap-8">
+          <div className="flex justify-center items-start gap-4 w-full py-0 sm:gap-8 px-0">
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
                 <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
@@ -163,6 +137,5 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
