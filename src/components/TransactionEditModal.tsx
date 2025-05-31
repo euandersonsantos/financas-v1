@@ -275,7 +275,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
             
             {/* Save Button - Positioned absolutely */}
-            <div className="absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]"> {/* Added z-index and positioning classes, adjusted padding */}
+            <div className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]"> {/* Added z-index and positioning classes, adjusted padding */}
               <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
                 Salvar
               </Button>
