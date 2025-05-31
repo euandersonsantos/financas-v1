@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface TransactionEditModalProps {
@@ -39,11 +38,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     return `R$ ${formatted}`;
   };
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    setAmount(value);
-  };
-
   const calculatePercentage = () => {
     const totalRevenue = 10500; // Based on the mock data
     const amountValue = parseInt(amount) / 100;
@@ -66,90 +60,99 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   return (
     <div className="fixed inset-0 z-[60] bg-black/50" onClick={onClose}>
       <div 
-        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-6 animate-slide-in-bottom z-[61]"
+        className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 animate-slide-in-bottom z-[61]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Progress Bar */}
-        <div className="w-full h-1 bg-gray-200 rounded-full mb-6">
-          <div className="w-1/2 h-full bg-gradient-to-r from-[#78B60F] to-[#6D96E4] rounded-full"></div>
-        </div>
-
-        {/* Header */}
+        {/* Header with Progress Bar */}
         <div className="flex items-center justify-between mb-6">
-          <button onClick={onClose} className="p-2">
-            <X className="w-6 h-6 text-gray-600" />
+          <button onClick={onClose} className="p-1">
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
           </button>
-          <h2 className="text-lg font-bold text-[#43464D]">
-            Editar lançamento - Março 2025
-          </h2>
-          <div className="w-10"></div>
+          <div className="relative w-32 h-1 bg-[#ECECEC] rounded-sm overflow-hidden">
+            <div 
+              className="absolute top-0 left-0 h-full rounded-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4]" 
+              style={{ width: '50%' }}
+            />
+          </div>
+          <div className="w-6"></div>
         </div>
 
-        {/* Transaction Title */}
-        <div className="mb-4">
-          <h3 className="text-xl font-bold text-[#43464D] mb-2">{title}</h3>
-          <div className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
-            {formatCurrency(amount)}
+        {/* Title and Transaction Info */}
+        <h1 className="text-xl font-semibold text-gray-800 mb-1">
+          Editar lançamento - Março 2025
+        </h1>
+        <p className="text-gray-500 text-sm mb-1">Pró-Labore</p>
+        <p className="text-3xl font-bold mb-1 bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent">
+          {formatCurrency(amount)}
+        </p>
+        <p className="text-gray-500 text-xs">100% do faturamento</p>
+
+        {/* Dashed Border Section */}
+        <div className="border-t border-b border-dashed border-gray-200 my-6 py-4 -mx-4 px-4">
+          <div className="flex justify-between items-center mb-3">
+            <p className="text-sm text-gray-600">Valor total do faturamento</p>
+            <p className="text-sm text-gray-800 font-medium">R$ 10.500,00</p>
           </div>
-          <p className="text-gray-500 text-sm">{description}</p>
+          <div className="flex justify-between items-center mb-3">
+            <p className="text-sm text-gray-600">% de desconto</p>
+            <p className="text-sm text-gray-800 font-medium">{calculatePercentage()}%</p>
+          </div>
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-600">Valor do pró-labore</p>
+            <p className="text-sm text-gray-800 font-medium">{formatCurrency(amount)}</p>
+          </div>
         </div>
 
         {/* Form Fields */}
-        <div className="space-y-6 mb-8">
-          {/* Total Revenue Section */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Valor total do faturamento</span>
-              <span className="text-gray-900 font-medium">R$ 10.500,00</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">% de desconto</span>
-              <span className="text-gray-900 font-medium">{calculatePercentage()}%</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Valor do pró-labore</span>
-              <span className="text-gray-900 font-medium">{formatCurrency(amount)}</span>
-            </div>
-          </div>
-
+        <div className="space-y-4 mb-8">
           {/* Due Date */}
-          <div className="space-y-2">
-            <label className="text-gray-600 text-sm">Data de vencimento</label>
-            <Select value={dueDate} onValueChange={setDueDate}>
-              <SelectTrigger className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3">
-                <SelectValue placeholder="Selecione o dia" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 31 }, (_, i) => (
-                  <SelectItem key={i + 1} value={String(i + 1)}>
-                    Dia {i + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-600">Data de vencimento</p>
+            <div className="flex items-center">
+              <Select value={dueDate} onValueChange={setDueDate}>
+                <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
+                  <div className="flex items-center">
+                    <SelectValue className="text-sm text-gray-800 mr-1" />
+                    <ChevronDown className="w-4 h-4 text-gray-600" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                  {Array.from({ length: 31 }, (_, i) => (
+                    <SelectItem key={i + 1} value={String(i + 1)}>
+                      Dia {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Recurrence */}
-          <div className="space-y-2">
-            <label className="text-gray-600 text-sm">Recorrência</label>
-            <Select value={recurrence} onValueChange={setRecurrence}>
-              <SelectTrigger className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3">
-                <SelectValue placeholder="Selecione a recorrência" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Semanal">Semanal</SelectItem>
-                <SelectItem value="Mensal">Mensal</SelectItem>
-                <SelectItem value="Trimestral">Trimestral</SelectItem>
-                <SelectItem value="Anual">Anual</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-600">Recorrência</p>
+            <div className="flex items-center">
+              <Select value={recurrence} onValueChange={setRecurrence}>
+                <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
+                  <div className="flex items-center">
+                    <SelectValue className="text-sm text-gray-800 mr-1" />
+                    <ChevronDown className="w-4 h-4 text-gray-600" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                  <SelectItem value="Semanal">Semanal</SelectItem>
+                  <SelectItem value="Mensal">Mensal</SelectItem>
+                  <SelectItem value="Trimestral">Trimestral</SelectItem>
+                  <SelectItem value="Anual">Anual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
         {/* Continue Button */}
         <Button 
           onClick={handleSave}
-          className="w-full bg-black text-white py-4 rounded-xl text-lg font-medium hover:bg-gray-800 transition-colors"
+          className="w-full bg-black text-white py-4 rounded-full font-semibold text-center hover:bg-gray-800 transition-colors"
         >
           Continuar
         </Button>
