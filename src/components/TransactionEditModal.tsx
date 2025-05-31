@@ -66,7 +66,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
         {/* Header with Progress Bar */}
         <div className="flex items-center justify-between mb-6">
           <button onClick={onClose} className="p-1">
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-gray-700">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+            </svg>
           </button>
           <div className="relative w-32 h-1 bg-[#ECECEC] rounded-sm overflow-hidden">
             <div 
@@ -90,24 +92,24 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
         {/* Dashed Border Section */}
         <div className="border-t border-b border-dashed border-gray-200 my-6 py-4 -mx-4 px-4">
           <div className="flex justify-between items-center mb-3">
-            <p className="text-sm text-gray-600">Valor total do faturamento</p>
+            <p className="text-sm text-gray-600 font-semibold">Valor total do faturamento</p>
             <p className="text-sm text-gray-800 font-medium">R$ 10.500,00</p>
           </div>
           <div className="flex justify-between items-center mb-3">
-            <p className="text-sm text-gray-600">% de desconto</p>
+            <p className="text-sm text-gray-600 font-semibold">% de desconto</p>
             <p className="text-sm text-gray-800 font-medium">{calculatePercentage()}%</p>
           </div>
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">Valor do pró-labore</p>
+            <p className="text-sm text-gray-600 font-semibold">Valor do pró-labore</p>
             <p className="text-sm text-gray-800 font-medium">{formatCurrency(amount)}</p>
           </div>
         </div>
 
         {/* Form Fields */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 mb-2">
           {/* Due Date */}
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">Data de vencimento</p>
+            <p className="text-sm text-gray-600 font-semibold">Data de vencimento</p>
             <div className="flex items-center">
               <Select value={dueDate} onValueChange={setDueDate}>
                 <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
@@ -116,7 +118,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                     <ChevronDown className="w-4 h-4 text-gray-600" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
                   {Array.from({ length: 31 }, (_, i) => (
                     <SelectItem key={i + 1} value={String(i + 1)}>
                       Dia {i + 1}
@@ -129,7 +131,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
           {/* Recurrence */}
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">Recorrência</p>
+            <p className="text-sm text-gray-600 font-semibold">Recorrência</p>
             <div className="flex items-center">
               <Select value={recurrence} onValueChange={setRecurrence}>
                 <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
@@ -138,7 +140,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                     <ChevronDown className="w-4 h-4 text-gray-600" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
                   <SelectItem value="Semanal">Semanal</SelectItem>
                   <SelectItem value="Mensal">Mensal</SelectItem>
                   <SelectItem value="Trimestral">Trimestral</SelectItem>
@@ -152,7 +154,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
         {/* Continue Button */}
         <Button 
           onClick={handleSave}
-          className="w-full bg-black text-white py-4 rounded-full font-semibold text-center hover:bg-gray-800 transition-colors"
+          className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
         >
           Continuar
         </Button>
