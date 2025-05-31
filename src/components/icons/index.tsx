@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const ArrowLeftIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
@@ -162,30 +163,66 @@ export const MenuIcon: React.FC<{ className?: string }> = ({ className = "w-8 h-
   </svg>
 );
 
-export const FaturamentoIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <mask id="mask0_faturamento" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
-      <rect x="0.5" width="24" height="24" fill="#D9D9D9" />
-    </mask>
-    <g mask="url(#mask0_faturamento)">
-      <path d="M2.5 20V4H22.5V20H2.5ZM8.5 17H10.5V16H11.5C11.7833 16 12.0208 15.9042 12.2125 15.7125C12.4042 15.5208 12.5 15.2833 12.5 15V12C12.5 11.7167 12.4042 11.4792 12.2125 11.2875C12.0208 11.0958 11.7833 11 11.5 11H8.5V10H12.5V8H10.5V7H8.5V8H7.5C7.21667 8 6.97917 8.09583 6.7875 8.2875C6.59583 8.47917 6.5 8.71667 6.5 9V12C6.5 12.2833 6.59583 12.5208 6.7875 12.7125C6.97917 12.9042 7.21667 13 7.5 13H10.5V14H6.5V16H8.5V17ZM16.5 16.25L18.5 14.25H14.5L16.5 16.25ZM14.5 10H18.5L16.5 8L14.5 10Z" fill="url(#paint0_linear_faturamento)" />
-    </g>
-    <defs>
-      <linearGradient id="paint0_linear_faturamento" x1="-5.3125" y1="0.631579" x2="30.2546" y2="1.98833" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#78B60F" />
-        <stop offset="1" stopColor="#6D96E4" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
+export const FaturamentoIcon: React.FC<{ className?: string; isActive?: boolean }> = ({ className = "w-6 h-6", isActive = false }) => {
+  if (isActive) {
+    return (
+      <svg className={className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <mask id="mask0_faturamento_active" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
+          <rect x="0.5" width="24" height="24" fill="#D9D9D9" />
+        </mask>
+        <g mask="url(#mask0_faturamento_active)">
+          <path d="M2.5 20V4H22.5V20H2.5ZM8.5 17H10.5V16H11.5C11.7833 16 12.0208 15.9042 12.2125 15.7125C12.4042 15.5208 12.5 15.2833 12.5 15V12C12.5 11.7167 12.4042 11.4792 12.2125 11.2875C12.0208 11.0958 11.7833 11 11.5 11H8.5V10H12.5V8H10.5V7H8.5V8H7.5C7.21667 8 6.97917 8.09583 6.7875 8.2875C6.59583 8.47917 6.5 8.71667 6.5 9V12C6.5 12.2833 6.59583 12.5208 6.7875 12.7125C6.97917 12.9042 7.21667 13 7.5 13H10.5V14H6.5V16H8.5V17ZM16.5 16.25L18.5 14.25H14.5L16.5 16.25ZM14.5 10H18.5L16.5 8L14.5 10Z" fill="url(#paint0_linear_faturamento_active)" />
+        </g>
+        <defs>
+          <linearGradient id="paint0_linear_faturamento_active" x1="-5.3125" y1="0.631579" x2="30.2546" y2="1.98833" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#78B60F" />
+            <stop offset="1" stopColor="#6D96E4" />
+          </linearGradient>
+        </defs>
+      </svg>
+    );
+  }
 
-export const FechamentoIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <mask id="mask0_fechamento" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
-      <rect x="0.5" width="24" height="24" fill="#D9D9D9" />
-    </mask>
-    <g mask="url(#mask0_fechamento)">
-      <path d="M11.923 18.625H13.423V17.625H14.673C14.8858 17.625 15.0641 17.5532 15.2078 17.4095C15.3513 17.266 15.423 17.0878 15.423 16.875V13.875C15.423 13.6622 15.3513 13.484 15.2078 13.3405C15.0641 13.1968 14.8858 13.125 14.673 13.125H11.423V11.625H15.423V10.125H13.423V9.125H11.923V10.125H10.673C10.4602 10.125 10.282 10.1968 10.1385 10.3405C9.99483 10.484 9.923 10.6622 9.923 10.875V13.875C9.923 14.0878 9.99483 14.266 10.1385 14.4095C10.282 14.5532 10.4602 14.625 10.673 14.625H13.923V16.125H9.923V17.625H11.923V18.625ZM6.80775 21.5C6.30258 21.5 5.875 21.325 5.525 20.975C5.175 20.625 5 20.1974 5 19.6923V4.30775C5 3.80258 5.175 3.375 5.525 3.025C5.875 2.675 6.30258 2.5 6.80775 2.5H14.75L20 7.75V19.6923C20 20.1974 19.825 20.625 19.475 20.975C19.125 21.325 18.6974 21.5 18.1923 21.5H6.80775ZM14 7.8845V4H6.80775C6.73075 4 6.66025 4.03208 6.59625 4.09625C6.53208 4.16025 6.5 4.23075 6.5 4.30775V19.6923C6.5 19.7693 6.53208 19.8398 6.59625 19.9038C6.66025 19.9679 6.73075 20 6.80775 20H18.1923C18.2693 20 18.3398 19.9679 18.4038 19.9038C18.4679 19.8398 18.5 19.7693 18.5 19.6923V7.8845H14Z" fill="#767E8F" />
-    </g>
-  </svg>
-);
+  return (
+    <svg className={className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <mask id="mask0_faturamento_inactive" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
+        <rect x="0.5" width="24" height="24" fill="#D9D9D9" />
+      </mask>
+      <g mask="url(#mask0_faturamento_inactive)">
+        <path d="M3 19.5V4.5H22V19.5H3ZM4.5 18H20.5V6H4.5V18ZM8.75 16.75H10.25V15.75H11.3652C11.6159 15.75 11.8261 15.6652 11.9957 15.4957C12.1652 15.3261 12.25 15.1159 12.25 14.8652V12.1348C12.25 11.8841 12.1652 11.6739 11.9957 11.5043C11.8261 11.3348 11.6159 11.25 11.3652 11.25H8.25V9.75H12.25V8.25H10.25V7.25H8.75V8.25H7.63475C7.38408 8.25 7.17392 8.33475 7.00425 8.50425C6.83475 8.67392 6.75 8.88408 6.75 9.13475V11.8652C6.75 12.1159 6.83475 12.3261 7.00425 12.4957C7.17392 12.6652 7.38408 12.75 7.63475 12.75H10.75V14.25H6.75V15.75H8.75V16.75ZM16.5 16.1152L18.2693 14.3463H14.7308L16.5 16.1152ZM14.7308 9.90375H18.2693L16.5 8.13475L14.7308 9.90375Z" fill="#7A7B7D" />
+      </g>
+    </svg>
+  );
+};
+
+export const FechamentoIcon: React.FC<{ className?: string; isActive?: boolean }> = ({ className = "w-6 h-6", isActive = false }) => {
+  if (isActive) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <mask id="mask0_fechamento_active" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+          <rect width="24" height="24" fill="#D9D9D9" />
+        </mask>
+        <g mask="url(#mask0_fechamento_active)">
+          <path d="M6.30775 21.5C5.80258 21.5 5.375 21.325 5.025 20.975C4.675 20.625 4.5 20.1974 4.5 19.6923V4.30775C4.5 3.80258 4.675 3.375 5.025 3.025C5.375 2.675 5.80258 2.5 6.30775 2.5H14.25L19.5 7.75V19.6923C19.5 20.1974 19.325 20.625 18.975 20.975C18.625 21.325 18.1974 21.5 17.6923 21.5H6.30775ZM11.423 18.625H12.923V17.625H14.173C14.3855 17.625 14.5637 17.5531 14.7075 17.4093C14.8512 17.2656 14.923 17.0875 14.923 16.875V13.875C14.923 13.6625 14.8512 13.4844 14.7075 13.3408C14.5637 13.1969 14.3855 13.125 14.173 13.125H10.923V11.625H14.923V10.125H12.923V9.125H11.423V10.125H10.173C9.9605 10.125 9.78242 10.1969 9.63875 10.3408C9.49492 10.4844 9.423 10.6625 9.423 10.875V13.875C9.423 14.0875 9.49492 14.2656 9.63875 14.4093C9.78242 14.5531 9.9605 14.625 10.173 14.625H13.423V16.125H9.423V17.625H11.423V18.625ZM13.627 7.75H17.377L13.627 4V7.75Z" fill="url(#paint0_linear_fechamento_active)" />
+        </g>
+        <defs>
+          <linearGradient id="paint0_linear_fechamento_active" x1="-1.35937" y1="-1.5" x2="25.3393" y2="-0.856765" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#78B60F" />
+            <stop offset="1" stopColor="#6D96E4" />
+          </linearGradient>
+        </defs>
+      </svg>
+    );
+  }
+
+  return (
+    <svg className={className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <mask id="mask0_fechamento_inactive" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
+        <rect x="0.5" width="24" height="24" fill="#D9D9D9" />
+      </mask>
+      <g mask="url(#mask0_fechamento_inactive)">
+        <path d="M11.923 18.625H13.423V17.625H14.673C14.8858 17.625 15.0641 17.5532 15.2078 17.4095C15.3513 17.266 15.423 17.0878 15.423 16.875V13.875C15.423 13.6622 15.3513 13.484 15.2078 13.3405C15.0641 13.1968 14.8858 13.125 14.673 13.125H11.423V11.625H15.423V10.125H13.423V9.125H11.923V10.125H10.673C10.4602 10.125 10.282 10.1968 10.1385 10.3405C9.99483 10.484 9.923 10.6622 9.923 10.875V13.875C9.923 14.0878 9.99483 14.266 10.1385 14.4095C10.282 14.5532 10.4602 14.625 10.673 14.625H13.923V16.125H9.923V17.625H11.923V18.625ZM6.80775 21.5C6.30258 21.5 5.875 21.325 5.525 20.975C5.175 20.625 5 20.1974 5 19.6923V4.30775C5 3.80258 5.175 3.375 5.525 3.025C5.875 2.675 6.30258 2.5 6.80775 2.5H14.75L20 7.75V19.6923C20 20.1974 19.825 20.625 19.475 20.975C19.125 21.325 18.6974 21.5 18.1923 21.5H6.80775ZM14 7.8845V4H6.80775C6.73075 4 6.66025 4.03208 6.59625 4.09625C6.53208 4.16025 6.5 4.23075 6.5 4.30775V19.6923C6.5 19.7693 6.53208 19.8398 6.59625 19.9038C6.66025 19.9679 6.73075 20 6.80775 20H18.1923C18.2693 20 18.3398 19.9679 18.4038 19.9038C18.4679 19.8398 18.5 19.7693 18.5 19.6923V7.8845H14Z" fill="#767E8F" />
+      </g>
+    </svg>
+  );
+};

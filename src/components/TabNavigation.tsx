@@ -20,9 +20,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         className={`flex w-[180px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[50px_0px_0px_50px] max-sm:w-[calc(50%-0.5px)] h-full bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]`}
       >
         <div className="flex items-center gap-2">
-          <div className={activeTab === 'faturamento' ? 'icon-gradient' : 'text-[#7A7B7D]'}>
-            <FaturamentoIcon className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-          </div>
+          <FaturamentoIcon 
+            className="w-6 h-6 max-sm:w-5 max-sm:h-5" 
+            isActive={activeTab === 'faturamento'} 
+          />
           <span className={`text-[14px] font-extrabold tracking-[0.01em] max-sm:text-xs ${
             activeTab === 'faturamento' 
               ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
@@ -42,9 +43,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         className={`flex w-[179px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[0px_50px_50px_0px] max-sm:w-[calc(50%-0.5px)] h-full bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]`}
       >
         <div className="flex items-center gap-2">
-          <div className={activeTab === 'fechamento' ? 'icon-gradient' : 'text-[#7A7B7D]'}>
-            <FechamentoIcon className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
-          </div>
+          <FechamentoIcon 
+            className="w-6 h-6 max-sm:w-5 max-sm:h-5" 
+            isActive={activeTab === 'fechamento'} 
+          />
           <span className={`text-[14px] font-medium tracking-[0.01em] max-sm:text-xs ${
             activeTab === 'fechamento' 
               ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
@@ -54,21 +56,6 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
           </span>
         </div>
       </button>
-      
-      <style>{`
-        .icon-gradient svg {
-          fill: url(#icon-gradient);
-        }
-      `}</style>
-      
-      <svg width="0" height="0" style={{ position: 'absolute' }}>
-        <defs>
-          <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#78B60F" />
-            <stop offset="100%" stopColor="#6D96E4" />
-          </linearGradient>
-        </defs>
-      </svg>
     </nav>
   );
 };
