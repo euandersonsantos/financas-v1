@@ -10,10 +10,12 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { TransactionEditModal } from "@/components/TransactionEditModal";
+import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
 
 function Index() {
   const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
+  const [isCompanySwitcherModalOpen, setIsCompanySwitcherModalOpen] = useState(false);
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
@@ -113,6 +115,12 @@ function Index() {
     console.log('Transaction saved:', updatedTransaction);
     setIsEditModalOpen(false);
   };
+
+  const openCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(true);
+  const closeCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(false);
+  const handleSelectCompany = (companyId: string) => {
+    console.log('Company selected:', companyId);
+  };
   const handleRefresh = async () => {
     console.log('Refreshing data...');
     // Simular carregamento
@@ -135,7 +143,7 @@ function Index() {
       
       <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
       
-      <CompanyInfo companyName="Anderson Design" onRefreshClick={() => console.log('Refresh clicked')} />
+      <CompanyInfo companyName="Anderson Design" onRefreshClick={openCompanySwitcherModal} />
       
       <main className="w-full h-[1400px] relative">
         <div className="w-full h-full relative">
@@ -194,6 +202,13 @@ function Index() {
         onClose={() => setIsEditModalOpen(false)}
         transaction={selectedTransaction}
         onSave={handleSaveTransaction}
+      />
+
+      <CompanySwitcherModal
+        isOpen={isCompanySwitcherModalOpen}
+        onClose={closeCompanySwitcherModal}
+        onSelectCompany={handleSelectCompany}
+        onRegisterNewCompany={() => console.log('Register new company clicked')}
       />
     </div>;
 }
