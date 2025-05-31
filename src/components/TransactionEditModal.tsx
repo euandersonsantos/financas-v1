@@ -99,7 +99,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
         {currentScreen === 'edit' ? <>
             {/* Title and Transaction Info */}
-            <h1 className="text-xl font-semibold text-gray-800 mb-1">
+            <h1 className="text-xl font-semibold text-gray-800 mt-0 mb-[16px]">
               Editar lançamento - Março 2025
             </h1>
             <p className="text-gray-500 text-sm mb-1">Pró-Labore</p>
