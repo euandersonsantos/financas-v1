@@ -21,6 +21,11 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
     ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
     : 'bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent';
 
+  // Replace R$ with + for income and - for expense
+  const displayAmount = type === 'income' 
+    ? amount.replace('R$', '+')
+    : amount.replace('R$', '-');
+
   return (
     <button
       onClick={onClick}
@@ -39,7 +44,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       </div>
       <div className="flex items-center gap-1">
         <span className={`text-base font-extrabold tracking-[0.01em] max-sm:text-sm ${gradientClass}`}>
-          {amount}
+          {displayAmount}
         </span>
         <ChevronRightIcon className="w-6 h-6" />
       </div>
