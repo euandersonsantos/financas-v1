@@ -1,20 +1,16 @@
-
 import React from 'react';
-
 interface RevenueSummaryProps {
   totalRevenue: string;
   percentageChange: number;
   comparisonText: string;
 }
-
 export const RevenueSummary: React.FC<RevenueSummaryProps> = ({
   totalRevenue,
   percentageChange,
   comparisonText
 }) => {
-  return (
-    <section className="flex w-[239px] flex-col items-start gap-2.5 max-sm:w-full">
-      <div className="flex flex-col items-start gap-1 w-full">
+  return <section className="flex w-[239px] flex-col items-start gap-2.5 max-sm:w-full">
+      <div className="flex flex-col items-start gap-0 w-full py-0">
         <h2 className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
           Total faturamento
         </h2>
@@ -26,6 +22,5 @@ export const RevenueSummary: React.FC<RevenueSummaryProps> = ({
           <span> {comparisonText}</span>
         </p>
       </div>
-    </section>
-  );
+    </section>;
 };
