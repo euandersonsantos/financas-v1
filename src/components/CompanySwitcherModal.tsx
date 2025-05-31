@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button'; // Assuming you have a Button component
-import { X, Building, PlusCircle } from 'lucide-react'; // Using lucide-react for icons
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
+import { X } from 'lucide-react';
+import { Building, Plus, Pencil, PlusCircle } from 'lucide-react';
 
 interface Company {
   id: string;
@@ -9,9 +11,9 @@ interface Company {
 }
 
 // Placeholder company data - replace with your actual data source
-const mockCompanies: Company[] = [
-  { id: '1', name: 'Anderson Design', icon: <Building className="w-6 h-6 mr-3 text-gray-500" /> },
-  { id: '2', name: 'Alpha Co.', icon: <Building className="w-6 h-6 mr-3 text-gray-500" /> },
+const mockCompanies: Company[] = [ // Using provided mock data from the image
+  { id: '1', name: 'Anderson Design' }, 
+  { id: '2', name: 'Clínica Zens' },
   { id: '3', name: 'Beta LLC', icon: <Building className="w-6 h-6 mr-3 text-gray-500" /> },
 ];
 
