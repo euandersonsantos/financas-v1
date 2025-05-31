@@ -59,12 +59,13 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       setTimeout(() => {
         inputRef.current?.focus();
         inputRef.current?.select();
-      }, 300); // Wait for transition to complete
+      }, 100); // Reduced timeout for faster response
     }
   }, [currentScreen]);
 
   const formatCurrency = (value: string) => {
     const numericValue = value.replace(/\D/g, '');
+    if (!numericValue || numericValue === '0') return 'R$ 0,00';
     const formatted = (parseInt(numericValue) / 100).toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -73,6 +74,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   };
 
   const formatCurrencyDisplay = (cents: string) => {
+    if (!cents || cents === '0') return '0,00';
     const numericValue = parseInt(cents) / 100;
     return numericValue.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
@@ -83,12 +85,14 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   const calculatePercentage = () => {
     const totalRevenue = 10500; // Based on the mock data
     const amountValue = parseInt(amount) / 100;
+    if (isNaN(amountValue)) return '0.0';
     return (amountValue / totalRevenue * 100).toFixed(1);
   };
 
   const calculateDifference = () => {
     const originalValue = parseInt(amount);
     const newValueInt = parseInt(newValue);
+    if (isNaN(originalValue) || isNaN(newValueInt)) return 0;
     const difference = newValueInt - originalValue;
     return Math.abs(difference);
   };
@@ -128,7 +132,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[R$\s.,]/g, '');
-    setNewValue(value);
+    setNewValue(value || '0');
   };
 
   if (!isOpen || !transaction) return null;
@@ -141,9 +145,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       onClick={handleBack}
     >
       <div 
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 z-[61] transition-transform duration-300 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 pb-6 z-[61] transition-all duration-300 ease-out ${
           isClosing ? 'translate-y-full' : 'translate-y-0'
-        }`} 
+        } ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`} 
         onClick={e => e.stopPropagation()}
       >
         {/* Header with Progress Bar */}
@@ -181,20 +185,20 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-4 my-6">
             <div className="flex justify-between items-center mb-3">
               <p className="text-sm text-gray-600 font-semibold">Valor total do faturamento</p>
-              <p className="text-sm text-gray-800 font-medium">R$ 10.500,00</p>
+              <p className="text-sm text-gray-800 font-semibold">R$ 10.500,00</p>
             </div>
             <div className="flex justify-between items-center mb-3">
               <p className="text-sm text-gray-600 font-semibold">% de desconto</p>
-              <p className="text-sm text-gray-800 font-medium">{calculatePercentage()}%</p>
+              <p className="text-sm text-gray-800 font-semibold">{calculatePercentage()}%</p>
             </div>
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600 font-semibold">Valor do pró-labore</p>
-              <p className="text-sm text-gray-800 font-medium">{formatCurrency(amount)}</p>
+              <p className="text-sm text-gray-800 font-semibold">{formatCurrency(amount)}</p>
             </div>
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 mb-6">
             {/* Due Date */}
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600 font-semibold">Data de vencimento</p>
@@ -202,7 +206,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={dueDate} onValueChange={setDueDate}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
                       <ChevronDown className="w-4 h-4 text-gray-600" />
                     </div>
                   </SelectTrigger>
@@ -224,7 +228,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={recurrence} onValueChange={setRecurrence}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
                       <ChevronDown className="w-4 h-4 text-gray-600" />
                     </div>
                   </SelectTrigger>
@@ -249,14 +253,14 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
         </div>
 
         <div className={`transition-all duration-300 ease-in-out ${
-          currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute inset-0 p-4'
+          currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute inset-0 p-4 pb-6'
         }`}>
           {/* Value Edit Screen */}
-          <div className="mt-14"> {/* Account for header space */}
+          <div className="mt-16"> {/* Reduced margin-top */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
               Editar o valor do Pró-labore
             </h1>
-            <p className="text-gray-500 text-sm mb-6">Ajuste o valor do novo pró-labore</p>
+            <p className="text-gray-500 text-sm mb-4">Ajuste o valor do novo pró-labore</p> {/* Reduced margin-bottom */}
 
             {/* Value Input */}
             <div className="mb-6">
@@ -293,7 +297,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
 
             {/* Revision Section */}
-            <div className="mb-8">
+            <div className="mb-6"> {/* Reduced margin-bottom */}
               <p className="text-sm text-gray-600 mb-2">Revisão do novo valor</p>
               <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
               <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
