@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-
 interface TransactionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,7 +15,6 @@ interface TransactionEditModalProps {
   } | null;
   onSave: (transaction: any) => void;
 }
-
 export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   isOpen,
   onClose,
@@ -45,7 +42,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       document.body.style.position = '';
       document.body.style.width = '';
     }
-
     return () => {
       document.body.style.overflow = '';
       document.body.style.position = '';
@@ -57,14 +53,13 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   useEffect(() => {
     if (currentScreen === 'value' && inputRef.current) {
       setTimeout(() => {
- inputRef.current?.focus({
-          preventScroll: true,
+        inputRef.current?.focus({
+          preventScroll: true
         });
         inputRef.current?.select();
       }, 100); // Reduced timeout for faster response
     }
   }, [currentScreen]);
-
   const formatCurrency = (value: string) => {
     const numericValue = value.replace(/\D/g, '');
     if (!numericValue || numericValue === '0') return 'R$ 0,00';
@@ -74,7 +69,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     });
     return `R$ ${formatted}`;
   };
-
   const formatCurrencyDisplay = (cents: string) => {
     if (!cents || cents === '0') return '0,00';
     const numericValue = parseInt(cents) / 100;
@@ -83,14 +77,12 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       maximumFractionDigits: 2
     });
   };
-
   const calculatePercentage = () => {
     const totalRevenue = 10500; // Based on the mock data
     const amountValue = parseInt(amount) / 100;
     if (isNaN(amountValue)) return '0.0';
     return (amountValue / totalRevenue * 100).toFixed(1);
   };
-
   const calculateDifference = () => {
     const originalValue = parseInt(amount);
     const newValueInt = parseInt(newValue);
@@ -98,11 +90,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     const difference = newValueInt - originalValue;
     return Math.abs(difference);
   };
-
   const handleContinue = () => {
     setCurrentScreen('value');
   };
-
   const handleBack = () => {
     if (currentScreen === 'value') {
       setCurrentScreen('edit');
@@ -115,7 +105,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       }, 300);
     }
   };
-
   const handleSave = () => {
     const updatedTransaction = {
       ...transaction,
@@ -131,27 +120,13 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       setCurrentScreen('edit');
     }, 300);
   };
-
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[R$\s.,]/g, '');
     setNewValue(value || '0');
   };
-
   if (!isOpen || !transaction) return null;
-
-  return (
-    <div 
-      className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
-        isClosing ? 'opacity-0' : 'opacity-100'
-      }`} 
-      onClick={handleBack}
-    >
-      <div 
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 pb-6 z-[61] transition-all duration-300 ease-out ${
-          isClosing ? 'translate-y-full' : 'translate-y-0'
-        } ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`} 
-        onClick={e => e.stopPropagation()}
-      >
+  return <div className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${isClosing ? 'opacity-0' : 'opacity-100'}`} onClick={handleBack}>
+      <div className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 pb-6 z-[61] transition-all duration-300 ease-out ${isClosing ? 'translate-y-full' : 'translate-y-0'} ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`} onClick={e => e.stopPropagation()}>
         {/* Header with Progress Bar */}
         <div className="flex items-center justify-between mb-6">
           <button onClick={handleBack} className="p-1">
@@ -160,19 +135,14 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </svg>
           </button>
           <div className="relative w-32 h-1 bg-[#ECECEC] rounded-sm overflow-hidden">
-            <div 
-              className={`absolute top-0 left-0 h-full rounded-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4] transition-all duration-500 ease-out`}
-              style={{
-                width: currentScreen === 'edit' ? '50%' : '100%'
-              }} 
-            />
+            <div className={`absolute top-0 left-0 h-full rounded-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4] transition-all duration-500 ease-out`} style={{
+            width: currentScreen === 'edit' ? '50%' : '100%'
+          }} />
           </div>
           <div className="w-6"></div>
         </div>
 
-        <div className={`transition-all duration-300 ease-in-out ${
-          currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute'
-        }`}>
+        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute'}`}>
           {/* Edit Screen Content */}
           <h1 className="text-xl font-semibold text-gray-800 mb-1">
             Editar lançamento - Março 2025
@@ -212,11 +182,11 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>
+                    {Array.from({
+                    length: 31
+                  }, (_, i) => <SelectItem key={i + 1} value={String(i + 1)}>
                         Dia {i + 1}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -246,17 +216,13 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
         </div>
 
         {/* Continue Button */}
-        <div className={`transition-all duration-300 ease-in-out ${
-          currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'
-        } absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]`}> {/* Added z-index and positioning classes */}
+        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]`}> {/* Added z-index and positioning classes */}
             <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
               Continuar
             </Button>
         </div>
 
-        <div className={`transition-all duration-300 ease-in-out ${
-          currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'
-        }`}>
+        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'}`}>
           {/* Value Edit Screen */}
           <div className="mt-8"> {/* Reduced margin-top */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
@@ -266,20 +232,12 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
             {/* Value Input */}
             <div className="mb-6">
-              <input
-                ref={inputRef}
-                type="tel"
-                inputMode="numeric"
-                value={`R$ ${formatCurrencyDisplay(newValue)}`}
-                onChange={handleValueChange}
-                className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-black focus:outline-none bg-transparent w-full focus:ring-0"
-                style={{
-                  background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}
-              />
+              <input ref={inputRef} type="tel" inputMode="numeric" value={`R$ ${formatCurrencyDisplay(newValue)}`} onChange={handleValueChange} className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-black focus:outline-none bg-transparent w-full focus:ring-0" style={{
+              background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }} />
             </div>
 
             <div className="pb-20"> {/* Added padding-bottom to prevent overlap */}
@@ -318,7 +276,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
 
             {/* Save Button */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]"> {/* Added z-index */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white z-[62] py-0"> {/* Added z-index */}
               <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
                 Salvar
               </Button>
@@ -326,6 +284,5 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
