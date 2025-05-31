@@ -8,7 +8,7 @@ export const CompanyInfo: React.FC<CompanyInfoProps> = ({
   companyName,
   onRefreshClick
 }) => {
-  return <section className="flex w-full justify-between items-center h-6 px-[21px] py-6 max-sm:px-[15px] my-[8px]">
+  return <section className="flex w-full justify-between items-center h-6 py-[16px] px-[24px] my-[8px]">
       <div className="flex items-center gap-2">
         <BuildingIcon className="w-6 h-6" />
         <span className="text-white text-lg font-bold tracking-[0.01em] max-sm:text-base">
