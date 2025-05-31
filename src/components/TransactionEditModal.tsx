@@ -106,7 +106,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             <p className="text-3xl font-bold mb-1 bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent">
               {formatCurrency(amount)}
             </p>
-            <p className="text-gray-500 text-xs">100% do faturamento</p>
+            <p className="text-gray-500 text-xs font-medium">100% do faturamento</p>
 
             {/* Dashed Border Section */}
             <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-[16px] my-[24px]">
