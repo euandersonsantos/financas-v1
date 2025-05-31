@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
       paddingTop: '20px',
       backgroundColor: '#000000'
     }}>
-        <div className="flex justify-center items-center w-full px-[21px] h-[60px] max-sm:px-[15px] relative">
+        <div className="flex justify-center items-center w-full h-[60px] relative px-[24px]">
           <button onClick={onBackClick} className="w-6 h-6 flex-shrink-0 z-10 flex items-center justify-center absolute left-[21px] max-sm:left-[15px]" aria-label="Voltar">
             <ArrowLeftIcon />
           </button>
