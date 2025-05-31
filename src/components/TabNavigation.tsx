@@ -17,14 +17,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         role="tab"
         aria-selected={activeTab === 'faturamento'}
         onClick={() => onTabChange('faturamento')}
-        className={`flex w-[180px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[50px_0px_0px_50px] max-sm:w-[calc(50%-0.5px)] h-full ${
-          activeTab === 'faturamento'
-            ? 'bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]'
-            : 'bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]'
-        }`}
+        className={`flex w-[180px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[50px_0px_0px_50px] max-sm:w-[calc(50%-0.5px)] h-full bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]`}
       >
         <div className="flex items-center gap-2">
-          <div className={activeTab === 'faturamento' ? 'text-gradient' : 'text-[#7A7B7D]'}>
+          <div className={activeTab === 'faturamento' ? 'icon-gradient' : 'text-[#7A7B7D]'}>
             <FaturamentoIcon className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
           </div>
           <span className={`text-[14px] font-extrabold tracking-[0.01em] max-sm:text-xs ${
@@ -43,14 +39,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         role="tab"
         aria-selected={activeTab === 'fechamento'}
         onClick={() => onTabChange('fechamento')}
-        className={`flex w-[179px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[0px_50px_50px_0px] max-sm:w-[calc(50%-0.5px)] h-full ${
-          activeTab === 'fechamento'
-            ? 'bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]'
-            : 'bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]'
-        }`}
+        className={`flex w-[179px] flex-col justify-center items-center gap-2.5 px-2.5 py-2 rounded-[0px_50px_50px_0px] max-sm:w-[calc(50%-0.5px)] h-full bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.02)]`}
       >
         <div className="flex items-center gap-2">
-          <div className={activeTab === 'fechamento' ? 'text-gradient' : 'text-[#7A7B7D]'}>
+          <div className={activeTab === 'fechamento' ? 'icon-gradient' : 'text-[#7A7B7D]'}>
             <FechamentoIcon className="w-6 h-6 max-sm:w-5 max-sm:h-5" />
           </div>
           <span className={`text-[14px] font-medium tracking-[0.01em] max-sm:text-xs ${
@@ -64,13 +56,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
       </button>
       
       <style>{`
-        .text-gradient {
-          background: linear-gradient(90deg, #78B60F 0%, #6D96E4 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .text-gradient svg {
+        .icon-gradient svg {
           fill: url(#icon-gradient);
         }
       `}</style>
