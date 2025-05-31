@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowLeftIcon, SettingsIcon } from './icons';
 interface HeaderProps {
@@ -19,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
     }} />
       
       <header className="w-full bg-black relative border-b border-[rgba(255,255,255,0.16)]" style={{
-      paddingTop: '20px',
+      paddingTop: '12px',
       backgroundColor: '#000000'
     }}>
         <div className="flex justify-center items-center w-full h-[60px] relative px-[24px]">
