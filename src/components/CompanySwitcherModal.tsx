@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
-import { X } from 'lucide-react';
-import { Building, Plus, Pencil, PlusCircle } from 'lucide-react';
+import { Button } from './ui/button';
+import { X, Building, Plus, Pencil, PlusCircle } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
 interface Company {
   id: string;
@@ -11,10 +10,9 @@ interface Company {
 }
 
 // Placeholder company data - replace with your actual data source
-const mockCompanies: Company[] = [ // Using provided mock data from the image
-  { id: '1', name: 'Anderson Design' }, 
+const mockCompanies: Company[] = [
+  { id: '1', name: 'Anderson Design' },
   { id: '2', name: 'Clínica Zens' },
-  { id: '3', name: 'Beta LLC', icon: <Building className="w-6 h-6 mr-3 text-gray-500" /> },
 ];
 
 interface CompanySwitcherModalProps {
@@ -25,8 +23,8 @@ interface CompanySwitcherModalProps {
 }
 
 export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
-  isOpen,
   onClose,
+  isOpen,
   onSelectCompany,
   onRegisterNewCompany,
 }) => {
