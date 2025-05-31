@@ -57,7 +57,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   useEffect(() => {
     if (currentScreen === 'value' && inputRef.current) {
       setTimeout(() => {
-        inputRef.current?.focus();
+ inputRef.current?.focus({
+          preventScroll: true,
+        });
         inputRef.current?.select();
       }, 100); // Reduced timeout for faster response
     }
