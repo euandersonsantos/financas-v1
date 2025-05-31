@@ -63,7 +63,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
         </div>
       </button>
       
-      <style jsx>{`
+      <style>{`
         .text-gradient {
           background: linear-gradient(90deg, #78B60F 0%, #6D96E4 100%);
           -webkit-background-clip: text;
