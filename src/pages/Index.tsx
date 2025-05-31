@@ -200,7 +200,7 @@ function Index() {
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
-        <div className="absolute w-full flex flex-col items-start gap-10 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
+        <div className="absolute w-full flex flex-col items-start gap-6 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
           <TabNavigation 
             activeTab={activeTab}
             onTabChange={handleTabChange}
