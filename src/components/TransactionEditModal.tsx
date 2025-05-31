@@ -247,7 +247,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           <Button 
             onClick={handleContinue} 
             className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-          >
+          >            
             Continuar
           </Button>
         </div>
@@ -281,25 +281,36 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
 
             {/* Comparison Section */}
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-6 font-semibold">
+              {/* Value Previous */}
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">Valor anterior</p>
                 <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(amount)}</p>
               </div>
+              {/* Value Adjusted */}
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">Valor ajustado</p>
                 <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(newValue)}</p>
               </div>
               <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">Diferença</p>
+                <p className="text-sm text-gray-600 font-semibold">Valor ajustado</p>
+                <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(newValue)}</p>
+              </div>
+              {/* Difference */}
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-600 font-semibold">Diferença</p>
                 <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(String(calculateDifference()))}</p>
               </div>
             </div>
+            
+            {/* Dashed Separator Line */}
+            <div className="border-t border-dashed border-[#eaeaea] w-full my-6"></div>
 
             {/* Revision Section */}
             <div className="mb-6"> {/* Reduced margin-bottom */}
-              <p className="text-sm text-gray-600 mb-2">Revisão do novo valor</p>
+              <p className="text-sm text-gray-600 mb-2 font-semibold">Revisão do novo valor</p>
               <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
+              {/* New Value */}
               <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
                 R$ {formatCurrencyDisplay(newValue)}
               </p>
@@ -310,7 +321,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             <Button 
               onClick={handleSave} 
               className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-            >
+            >              
               Salvar
             </Button>
           </div>
