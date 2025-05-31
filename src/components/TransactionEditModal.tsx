@@ -214,12 +214,11 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           </div>
 
         </div>
-
         {/* Continue Button */}
-        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]`}> {/* Added z-index and positioning classes */}
-            <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
+        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]`}> {/* Added z-index and positioning classes, adjusted padding */}
+          <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
               Continuar
-            </Button>
+          </Button>
         </div>
 
         <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'}`}>
@@ -274,9 +273,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <p className="text-sm text-gray-500">Mensal - Dia {dueDate}</p>
               </div>
             </div>
-
-            {/* Save Button */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white z-[62] py-0"> {/* Added z-index */}
+            
+            {/* Save Button - Positioned absolutely */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]"> {/* Added z-index and positioning classes, adjusted padding */}
               <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
                 Salvar
               </Button>
