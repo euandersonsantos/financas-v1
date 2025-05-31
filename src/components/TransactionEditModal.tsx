@@ -207,7 +207,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
                       <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
-                      <ChevronDown className="w-4 h-4 text-gray-600" />
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
@@ -229,7 +228,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
                       <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
-                      <ChevronDown className="w-4 h-4 text-gray-600" />
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
