@@ -129,6 +129,9 @@ function Index() {
     <div 
       ref={scrollableRef}
       className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto"
+      style={{
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 100px)'
+      }}
     >
       <PullToRefreshIndicator
         isVisible={shouldShowIndicator}

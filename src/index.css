@@ -4,14 +4,43 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+html, body {
   font-family: "Urbanist", sans-serif;
   margin: 0;
+  padding: 0;
+  background-color: #000000 !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   min-font-size: 12px;
+}
+
+/* Específico para PWA instalado no iOS */
+@media (display-mode: standalone) {
+  html, body {
+    background-color: #000000 !important;
+  }
+  
+  /* Força o fundo preto na área do status bar */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0px);
+    background-color: #000000;
+    z-index: 9999;
+    pointer-events: none;
+  }
+}
+
+/* Para iOS Safari em modo fullscreen */
+@supports (padding: max(0px)) {
+  html, body {
+    background-color: #000000 !important;
+  }
 }
 
 /* Melhor legibilidade em dispositivos móveis */
