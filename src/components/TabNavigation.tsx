@@ -24,10 +24,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             className="w-6 h-6 max-sm:w-5 max-sm:h-5" 
             isActive={activeTab === 'faturamento'} 
           />
-          <span className={`text-[14px] font-extrabold tracking-[0.01em] max-sm:text-xs ${
+          <span className={`text-[14px] tracking-[0.01em] max-sm:text-xs ${
             activeTab === 'faturamento' 
-              ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
-              : 'text-[#7A7B7D]'
+              ? 'font-extrabold bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
+              : 'font-medium text-[#7A7B7D]'
           }`}>
             Faturamento
           </span>
@@ -47,10 +47,10 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             className="w-6 h-6 max-sm:w-5 max-sm:h-5" 
             isActive={activeTab === 'fechamento'} 
           />
-          <span className={`text-[14px] font-medium tracking-[0.01em] max-sm:text-xs ${
+          <span className={`text-[14px] tracking-[0.01em] max-sm:text-xs ${
             activeTab === 'fechamento' 
-              ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
-              : 'text-[#7A7B7D]'
+              ? 'font-extrabold bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
+              : 'font-medium text-[#7A7B7D]'
           }`}>
             Fechamento
           </span>
