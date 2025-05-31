@@ -8,6 +8,7 @@ interface DiscountItem {
   amount: string;
   description: string;
   fontWeight?: 'bold' | 'extrabold';
+  type?: 'income' | 'expense';
 }
 
 interface DiscountGridProps {
@@ -32,6 +33,7 @@ export const DiscountGrid: React.FC<DiscountGridProps> = ({
             amount={discount.amount}
             description={discount.description}
             fontWeight={discount.fontWeight}
+            type={discount.type}
           />
         ))}
       </div>

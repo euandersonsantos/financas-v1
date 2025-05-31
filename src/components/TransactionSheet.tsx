@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TransactionItem } from './TransactionItem';
 import { PlusIcon } from './icons';
@@ -145,7 +144,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
                   Saída
                 </span>
-                <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
+                <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent max-sm:text-sm">
                   {exitTotal}
                 </span>
               </div>

@@ -27,28 +27,32 @@ function Index() {
       title: 'Pró-Labore',
       amount: 'R$ 2.950,50',
       description: '100% do faturamento',
-      fontWeight: 'bold' as const
+      fontWeight: 'bold' as const,
+      type: 'expense' as const
     },
     {
       id: '2',
       title: 'DAS - SN',
       amount: 'R$ 630,00',
       description: '6% do faturamento',
-      fontWeight: 'extrabold' as const
+      fontWeight: 'extrabold' as const,
+      type: 'expense' as const
     },
     {
       id: '3',
       title: 'INSS',
       amount: 'R$ 324,55',
       description: '11% do pró-labore',
-      fontWeight: 'extrabold' as const
+      fontWeight: 'extrabold' as const,
+      type: 'expense' as const
     },
     {
       id: '4',
       title: 'Despesas',
       amount: 'R$ 112,13',
       description: 'Outras despesas',
-      fontWeight: 'extrabold' as const
+      fontWeight: 'extrabold' as const,
+      type: 'expense' as const
     }
   ];
 
