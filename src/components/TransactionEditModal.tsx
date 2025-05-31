@@ -256,7 +256,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute inset-0 p-4 pb-6'
         }`}>
           {/* Value Edit Screen */}
-          <div className="mt-16"> {/* Reduced margin-top */}
+          <div className="mt-8"> {/* Reduced margin-top */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
               Editar o valor do Pró-labore
             </h1>
