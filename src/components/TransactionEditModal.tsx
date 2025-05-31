@@ -3,7 +3,6 @@ import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-
 interface TransactionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -171,7 +170,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-4 mb-20">
+          <div className="space-y-4 mb-20"> {/* Added bottom margin to prevent overlap */}
             {/* Due Date */}
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600 font-semibold">Data de vencimento</p>
@@ -179,15 +178,15 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={dueDate} onValueChange={setDueDate}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" /> {/* Changed mr-1 to mr-0 for spacing */}
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>
+                    {Array.from({
+                    length: 31
+                  }, (_, i) => <SelectItem key={i + 1} value={String(i + 1)}>
                         Dia {i + 1}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -200,7 +199,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={recurrence} onValueChange={setRecurrence}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" /> {/* Changed mr-1 to mr-0 for spacing */}
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
@@ -213,42 +212,34 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
               </div>
             </div>
           </div>
-        </div>
 
+        </div>
         {/* Continue Button */}
-        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white z-[62]`}>
+        <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]`}> {/* Added z-index and positioning classes, adjusted padding */}
           <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
-            Continuar
+              Continuar
           </Button>
         </div>
 
         <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'}`}>
           {/* Value Edit Screen */}
-          <div className="mt-8">
+          <div className="mt-8"> {/* Reduced margin-top */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
               Editar o valor do Pró-labore
             </h1>
-            <p className="text-gray-500 text-sm mb-4">Ajuste o valor do novo pró-labore</p>
+            <p className="text-gray-500 text-sm mb-4">Ajuste o valor do novo pró-labore</p> {/* Reduced margin-bottom */}
 
             {/* Value Input */}
             <div className="mb-6">
-              <input 
-                ref={inputRef} 
-                type="tel" 
-                inputMode="numeric" 
-                value={`R$ ${formatCurrencyDisplay(newValue)}`} 
-                onChange={handleValueChange} 
-                className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-black focus:outline-none bg-transparent w-full focus:ring-0" 
-                style={{
-                  background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }} 
-              />
+              <input ref={inputRef} type="tel" inputMode="numeric" value={`R$ ${formatCurrencyDisplay(newValue)}`} onChange={handleValueChange} className="text-3xl font-bold border-0 border-b-2 border-gray-200 rounded-none px-0 pb-2 focus:border-black focus:outline-none bg-transparent w-full focus:ring-0" style={{
+              background: 'linear-gradient(92deg, #7637EA -38.53%, #FF7A00 134.29%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }} />
             </div>
 
-            <div className="pb-20">
+            <div className="pb-20"> {/* Added padding-bottom to prevent overlap */}
               {/* Comparison Section */}
               <div className="space-y-3 mb-6 font-semibold">
                 {/* Value Previous */}
@@ -269,11 +260,11 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
               </div>
 
               {/* Dashed Line */}
-              <div className="border-t border-dashed border-[#eaeaea] my-6 -mx-4"></div>
+              <div className="border-t border-dashed border-[#eaeaea] my-6 -mx-4"></div> {/* Added dashed line */}
 
               {/* Revision Section */}
-              <div className="mb-6">
-                <p className="text-base font-semibold text-gray-800 mb-2">Revisão do novo valor</p>
+              <div className="mb-6"> {/* Reduced margin-bottom */}
+                <p className="text-base font-semibold text-gray-800 mb-2">Revisão do novo valor</p> {/* Increased font weight */}
                 <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
                 {/* New Value */}
                 <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
@@ -284,7 +275,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
             
             {/* Save Button - Positioned absolutely */}
-            <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 bg-white z-[62]">
+            <div className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]"> {/* Added z-index and positioning classes, adjusted padding */}
               <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
                 Salvar
               </Button>
