@@ -51,7 +51,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
   // Auto-focus input when entering value screen
   useEffect(() => {
-    if (currentScreen === 'value' && inputRef.current) {
+    if (isOpen && currentScreen === 'value' && inputRef.current) {
       setTimeout(() => {
         inputRef.current?.focus({
           preventScroll: true
