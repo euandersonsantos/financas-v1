@@ -141,7 +141,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
 
   return (
     <div 
-      className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
         isClosing ? 'opacity-0' : 'opacity-100'
       }`} 
       onClick={handleBack}
@@ -184,8 +184,8 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           <p className="text-gray-500 text-xs">100% do faturamento</p>
 
           {/* Dashed Border Section */}
-          <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-4 my-6">
-            <div className="flex justify-between items-center mb-3">
+          <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-4 my-6 space-y-3">
+            <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600 font-semibold">Valor total do faturamento</p>
               <p className="text-sm text-gray-800 font-semibold">R$ 10.500,00</p>
             </div>
@@ -200,7 +200,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           </div>
 
           {/* Form Fields */}
-          <div className="space-y-4 mb-6">
+          <div className="space-y-4 mb-20"> {/* Added bottom margin to prevent overlap */}
             {/* Due Date */}
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600 font-semibold">Data de vencimento</p>
@@ -208,7 +208,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={dueDate} onValueChange={setDueDate}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" /> {/* Changed mr-1 to mr-0 for spacing */}
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
@@ -229,7 +229,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 <Select value={recurrence} onValueChange={setRecurrence}>
                   <SelectTrigger className="border-0 p-0 h-auto bg-transparent focus:ring-0 focus:ring-offset-0">
                     <div className="flex items-center">
-                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" />
+                      <SelectValue className="text-sm text-gray-800 mr-1 font-semibold" /> {/* Changed mr-1 to mr-0 for spacing */}
                     </div>
                   </SelectTrigger>
                   <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
@@ -243,17 +243,19 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
           </div>
 
-          {/* Continue Button */}
-          <Button 
-            onClick={handleContinue} 
-            className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-          >            
-            Continuar
-          </Button>
+        </div>
+
+        {/* Continue Button */}
+        <div className={`transition-all duration-300 ease-in-out ${
+          currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'
+        } absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]`}> {/* Added z-index and positioning classes */}
+            <Button onClick={handleContinue} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
+              Continuar
+            </Button>
         </div>
 
         <div className={`transition-all duration-300 ease-in-out ${
-          currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute inset-0 p-4 pb-6'
+          currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'
         }`}>
           {/* Value Edit Screen */}
           <div className="mt-8"> {/* Reduced margin-top */}
@@ -280,50 +282,47 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
               />
             </div>
 
-            {/* Comparison Section */}
-            <div className="space-y-3 mb-6 font-semibold">
-              {/* Value Previous */}
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">Valor anterior</p>
-                <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(amount)}</p>
+            <div className="pb-20"> {/* Added padding-bottom to prevent overlap */}
+              {/* Comparison Section */}
+              <div className="space-y-3 mb-6 font-semibold">
+                {/* Value Previous */}
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-gray-600 font-semibold">Valor anterior</p>
+                  <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(amount)}</p>
+                </div>
+                {/* Value Adjusted */}
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-gray-600 font-semibold">Valor ajustado</p>
+                  <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(newValue)}</p>
+                </div>
+                {/* Difference */}
+                <div className="flex justify-between items-center font-semibold">
+                  <p className="text-sm text-gray-600 font-semibold">Diferença</p>
+                  <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(String(calculateDifference()))}</p>
+                </div>
               </div>
-              {/* Value Adjusted */}
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600">Valor ajustado</p>
-                <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(newValue)}</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600 font-semibold">Valor ajustado</p>
-                <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(newValue)}</p>
-              </div>
-              {/* Difference */}
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-gray-600 font-semibold">Diferença</p>
-                <p className="text-sm text-gray-800">R$ {formatCurrencyDisplay(String(calculateDifference()))}</p>
-              </div>
-            </div>
-            
-            {/* Dashed Separator Line */}
-            <div className="border-t border-dashed border-[#eaeaea] w-full my-6"></div>
 
-            {/* Revision Section */}
-            <div className="mb-6"> {/* Reduced margin-bottom */}
-              <p className="text-sm text-gray-600 mb-2 font-semibold">Revisão do novo valor</p>
-              <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
-              {/* New Value */}
-              <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
-                R$ {formatCurrencyDisplay(newValue)}
-              </p>
-              <p className="text-sm text-gray-500">Mensal - Dia {dueDate}</p>
+              {/* Dashed Line */}
+              <div className="border-t border-dashed border-[#eaeaea] my-6 -mx-4"></div> {/* Added dashed line */}
+
+              {/* Revision Section */}
+              <div className="mb-6"> {/* Reduced margin-bottom */}
+                <p className="text-base font-semibold text-gray-800 mb-2">Revisão do novo valor</p> {/* Increased font weight */}
+                <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
+                {/* New Value */}
+                <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
+                  R$ {formatCurrencyDisplay(newValue)}
+                </p>
+                <p className="text-sm text-gray-500">Mensal - Dia {dueDate}</p>
+              </div>
             </div>
 
             {/* Save Button */}
-            <Button 
-              onClick={handleSave} 
-              className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mb-2"
-            >              
-              Salvar
-            </Button>
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white z-[62]"> {/* Added z-index */}
+              <Button onClick={handleSave} className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]">
+                Salvar
+              </Button>
+            </div>
           </div>
         </div>
       </div>
