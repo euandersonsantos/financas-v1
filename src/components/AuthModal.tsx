@@ -1,75 +1,57 @@
 
 import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const [isLogin, setIsLogin] = useState(true);
+export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { signIn, signUp } = useAuth();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) throw error;
-        toast({ title: 'Login realizado com sucesso!' });
-        onClose();
+      const result = isSignUp 
+        ? await signUp(email, password)
+        : await signIn(email, password);
+
+      if (result.error) {
+        setError(result.error);
       } else {
-        const { error } = await signUp(email, password, fullName);
-        if (error) throw error;
-        toast({ title: 'Conta criada com sucesso! Verifique seu email.' });
         onClose();
       }
-    } catch (error: any) {
-      toast({
-        title: 'Erro',
-        description: error.message,
-        variant: 'destructive',
-      });
+    } catch (err) {
+      setError('Erro inesperado');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">
-          {isLogin ? 'Entrar' : 'Criar Conta'}
-        </h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {isSignUp ? 'Criar conta' : 'Entrar'}
+          </DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <Label htmlFor="fullName">Nome Completo</Label>
-              <Input
-                id="fullName"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required={!isLogin}
-              />
-            </div>
-          )}
-          
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -80,7 +62,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             />
           </div>
           
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
             <Input
               id="password"
@@ -88,33 +70,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={6}
             />
           </div>
-          
+
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
+            {loading ? 'Carregando...' : (isSignUp ? 'Criar conta' : 'Entrar')}
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? 'Já tem conta? Entre aqui' : 'Não tem conta? Crie aqui'}
           </Button>
         </form>
-        
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-blue-600 hover:underline"
-          >
-            {isLogin ? 'Não tem conta? Criar conta' : 'Já tem conta? Entrar'}
-          </button>
-        </div>
-        
-        <Button
-          variant="outline"
-          onClick={onClose}
-          className="w-full mt-4"
-        >
-          Cancelar
-        </Button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
-};
+}

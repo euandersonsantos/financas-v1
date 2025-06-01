@@ -1,123 +1,113 @@
 
 import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCompanies } from '@/hooks/useCompanies';
-import { useToast } from '@/hooks/use-toast';
 
 interface CompanySetupModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CompanySetupModal: React.FC<CompanySetupModalProps> = ({ 
-  isOpen, 
-  onClose 
-}) => {
+export function CompanySetupModal({ isOpen, onClose }: CompanySetupModalProps) {
   const [companyName, setCompanyName] = useState('');
-  const [proLaborePercentage, setProLaborePercentage] = useState('28.1');
-  const [inssPercentage, setInssPercentage] = useState('11');
-  const [dasPercentage, setDasPercentage] = useState('6');
+  const [proLaborePercentage, setProLaborePercentage] = useState('28.10');
+  const [inssPercentage, setInssPercentage] = useState('11.00');
+  const [dasPercentage, setDasPercentage] = useState('6.00');
   const [accountingFee, setAccountingFee] = useState('0');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   
   const { createCompany } = useCompanies();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
-      const { error } = await createCompany(companyName, {
+      const result = await createCompany(companyName, {
         pro_labore_percentage: parseFloat(proLaborePercentage),
         inss_percentage: parseFloat(inssPercentage),
         das_percentage: parseFloat(dasPercentage),
-        accounting_fee: parseFloat(accountingFee) || null,
+        accounting_fee: parseFloat(accountingFee)
       });
 
-      if (error) throw error;
-
-      toast({ title: 'Empresa criada com sucesso!' });
-      onClose();
-      
-      // Reset form
-      setCompanyName('');
-      setProLaborePercentage('28.1');
-      setInssPercentage('11');
-      setDasPercentage('6');
-      setAccountingFee('0');
-    } catch (error: any) {
-      toast({
-        title: 'Erro ao criar empresa',
-        description: error.message,
-        variant: 'destructive',
-      });
+      if (result.error) {
+        setError(result.error);
+      } else {
+        onClose();
+        // Reset form
+        setCompanyName('');
+        setProLaborePercentage('28.10');
+        setInssPercentage('11.00');
+        setDasPercentage('6.00');
+        setAccountingFee('0');
+      }
+    } catch (err) {
+      setError('Erro inesperado');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4">Configurar Nova Empresa</h2>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Configurar Nova Empresa</DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="companyName">Nome da Empresa</Label>
             <Input
               id="companyName"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="Ex: Anderson Design"
               required
             />
           </div>
           
-          <div>
-            <Label htmlFor="proLabore">Pró-labore (% do faturamento)</Label>
+          <div className="space-y-2">
+            <Label htmlFor="proLabore">Pró-labore (%)</Label>
             <Input
               id="proLabore"
               type="number"
-              step="0.1"
+              step="0.01"
               value={proLaborePercentage}
               onChange={(e) => setProLaborePercentage(e.target.value)}
-              placeholder="28.1"
               required
             />
           </div>
-          
-          <div>
+
+          <div className="space-y-2">
             <Label htmlFor="inss">INSS (% do pró-labore)</Label>
             <Input
               id="inss"
               type="number"
-              step="0.1"
+              step="0.01"
               value={inssPercentage}
               onChange={(e) => setInssPercentage(e.target.value)}
-              placeholder="11"
               required
             />
           </div>
-          
-          <div>
+
+          <div className="space-y-2">
             <Label htmlFor="das">DAS (% do faturamento)</Label>
             <Input
               id="das"
               type="number"
-              step="0.1"
+              step="0.01"
               value={dasPercentage}
               onChange={(e) => setDasPercentage(e.target.value)}
-              placeholder="6"
               required
             />
           </div>
-          
-          <div>
+
+          <div className="space-y-2">
             <Label htmlFor="accounting">Taxa de Contabilidade (R$)</Label>
             <Input
               id="accounting"
@@ -125,23 +115,18 @@ export const CompanySetupModal: React.FC<CompanySetupModalProps> = ({
               step="0.01"
               value={accountingFee}
               onChange={(e) => setAccountingFee(e.target.value)}
-              placeholder="0"
             />
           </div>
-          
+
+          {error && (
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Criando...' : 'Criar Empresa'}
           </Button>
         </form>
-        
-        <Button
-          variant="outline"
-          onClick={onClose}
-          className="w-full mt-4"
-        >
-          Cancelar
-        </Button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
-};
+}
