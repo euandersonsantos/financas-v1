@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, Building, Edit } from 'lucide-react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import { Building, PlusCircle, X, Edit } from 'lucide-react';
 
 interface Company {
   id: string;
@@ -27,8 +27,7 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
   onClose,
   isOpen,
   onSelectCompany,
-  onRegisterNewCompany,
-  onEditCompany,
+  onRegisterNewCompany
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>('1'); // Default to first company
@@ -79,31 +78,6 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
 
   if (!isOpen) return null;
 
-  const customRadioStyles = `
-    .custom-radio {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid #D1D5DB;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-    }
-    .custom-radio.selected {
-      border-color: #2DD4BF;
-      background-color: #2DD4BF;
-    }
-    .custom-radio.selected::after {
-      content: '';
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background-color: #2DD4BF;
-    }
-  `;
-
   return (
     <div 
       className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
@@ -111,7 +85,6 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
       }`}
       onClick={handleClose}
     >
-      <style dangerouslySetInnerHTML={{ __html: customRadioStyles }} />
       <div
         className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-[61] transition-all duration-300 ease-out shadow-xl ${
           isClosing ? 'translate-y-full' : 'translate-y-0'
@@ -144,13 +117,29 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
             >
               <div className="flex items-center space-x-3">
                 <div
-                  className={`custom-radio ${selectedCompanyId === company.id ? 'selected' : ''}`}
+                  className={`custom-radio ${selectedCompanyId === company.id ? 'selected' : ''}`} style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    border: selectedCompanyId === company.id ? '2px solid #2DD4BF' : '2px solid #D1D5DB',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease-in-out',
+                    backgroundColor: selectedCompanyId === company.id ? '#2DD4BF' : 'white'
+                  }}
                 ></div>
                 <Building className="text-gray-600" size={24} />
                 <span className="text-gray-700 font-medium">{company.name}</span>
               </div>
               <button 
                 className="text-gray-500 hover:text-gray-700 transition-colors"
+                style={{
+                  padding: '4px' // Equivalent to p-1 in tailwind
+                }}
+
+
                 onClick={(e) => handleEditCompany(company.id, e)}
               >
                 <Edit size={20} />
