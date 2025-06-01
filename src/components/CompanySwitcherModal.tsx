@@ -1,24 +1,26 @@
+
 import { Button } from '@/components/ui/button';
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Building, PlusCircle, X } from 'lucide-react';
-import { MaterialSymbolsOutlined as Icon } from '@/components/icons';
+import React, { useState, useEffect } from 'react';
+import { PlusCircle, Building, Edit } from 'lucide-react';
+
 interface Company {
   id: string;
   name: string;
-  icon?: React.ReactNode; // Optional: if you have specific icons per company
+  icon?: React.ReactNode;
 }
 
-// Placeholder company data - replace with your actual data source
+// Placeholder company data
 const mockCompanies: Company[] = [
   { id: '1', name: 'Anderson Design' },
   { id: '2', name: 'Clínica Zens' },
 ];
 
 interface CompanySwitcherModalProps {
-  isOpen: boolean; // Controls the visibility of the modal
-  onClose: () => void; // Function to close the modal
-  onSelectCompany: (companyId: string) => void; // Callback function when a company is selected
-  onRegisterNewCompany?: () => void; // Optional: Callback for registering a new company
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectCompany: (companyId: string) => void;
+  onRegisterNewCompany?: () => void;
+  onEditCompany?: (companyId: string) => void;
 }
 
 export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
@@ -26,9 +28,10 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
   isOpen,
   onSelectCompany,
   onRegisterNewCompany,
-
+  onEditCompany,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>('1'); // Default to first company
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -53,10 +56,8 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
     setTimeout(() => {
       onClose();
       setIsClosing(false);
-    }, 300); // Duration of the closing animation
+    }, 300);
   };
-
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
 
   const handleCompanySelect = (companyId: string) => {
     setSelectedCompanyId(companyId);
@@ -66,91 +67,108 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
     if (selectedCompanyId) {
       onSelectCompany(selectedCompanyId);
     }
-    handleClose(); // Close modal after applying
+    handleClose();
   };
+
+  const handleEditCompany = (companyId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (onEditCompany) {
+      onEditCompany(companyId);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${isClosing ? 'opacity-0' : 'opacity-100'}`}
-      onClick={handleClose} // Close when clicking on the overlay
+    <div 
+      className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
+        isClosing ? 'opacity-0' : 'opacity-100'
+      }`}
+      onClick={handleClose}
     >
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[24px] p-4 pb-6 z-[61] transition-all duration-300 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-[61] transition-all duration-300 ease-out shadow-xl ${
           isClosing ? 'translate-y-full' : 'translate-y-0'
         } ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`}
-        onClick={e => e.stopPropagation()} // Prevent closing when clicking inside the modal
+        onClick={e => e.stopPropagation()}
       >
+        {/* Handle bar */}
+        <div className="py-2 flex justify-center">
+          <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+        </div>
+
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Selecionar empresa</h2>
-          <button onClick={handleClose} className="text-gray-500 hover:text-gray-700">
-            <X size={24} />
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">Trocar empresa</h2>
+          <button 
+            onClick={onRegisterNewCompany}
+            className="text-gray-600 hover:text-teal-500 transition-colors"
+          >
+            <PlusCircle size={28} />
           </button>
         </div>
 
         {/* Company List */}
-        <div className="space-y-3 mb-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 space-y-3">
           {mockCompanies.map((company) => (
             <div
               key={company.id}
-              className="company-item flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 cursor-pointer"
+              className="company-item flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
               onClick={() => handleCompanySelect(company.id)}
             >
-              <div className="flex items-center">
+              <div className="flex items-center space-x-3">
                 <div
                   className={`custom-radio ${selectedCompanyId === company.id ? 'selected' : ''}`}
                 ></div>
+                <Building className="text-gray-600" size={24} />
                 <span className="text-gray-700 font-medium">{company.name}</span>
+              </div>
+              <button 
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+                onClick={(e) => handleEditCompany(company.id, e)}
+              >
+                <Edit size={20} />
               </button>
             </div>
           ))}
         </div>
 
-        {/* Apply Button */} {/* Moved below company list */}
-        <Button
-          className="w-full bg-gray-900 text-white font-semibold py-3 rounded-lg hover:bg-gray-800 transition duration-150 ease-in-out"
-          onClick={handleApplySelection}
-        >
-          Aplicar
-        </Button>
-        
-        {/* Register New Company Button */} {/* Moved below Apply Button for better flow */}
-        {/* You might want to make this conditional based on user permissions */}
-        <Button
-          variant="default"
-          className="w-full bg-black text-white rounded-full font-semibold text-center hover:bg-gray-800 transition-colors h-[52px] mt-3"
-          onClick={onRegisterNewCompany}
-        >
-          <PlusCircle size={20} className="mr-2" />
-          Cadastrar nova empresa
-        </Button>
-      </div>
-      
-      {/* Add custom styles for the radio button */}
-      <style jsx>{`
-        .custom-radio {
+        {/* Apply Button */}
+        <div className="p-4 mt-4">
+          <Button
+            className="w-full bg-gray-900 text-white font-semibold py-3 rounded-lg hover:bg-gray-800 transition duration-150 ease-in-out"
+            onClick={handleApplySelection}
+          >
+            Aplicar
+          </Button>
+        </div>
+
+        {/* Custom styles for radio button */}
+        <style jsx>{`
+          .custom-radio {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            border: 2px solid #D1D5DB; /* gray-300 */ /* Adjusted to match HTML comment */
+            border: 2px solid #D1D5DB;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
-        }
-        .custom-radio.selected {
-            border-color: #2DD4BF; /* teal-400 - Cor aproximada da imagem */
-            background-color: #2DD4BF; /* teal-400 */
-        }
-        .custom-radio.selected::after {
+          }
+          .custom-radio.selected {
+            border-color: #2DD4BF;
+            background-color: #2DD4BF;
+          }
+          .custom-radio.selected::after {
             content: '';
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: #2DD4BF; /* Mantem a cor de fundo, pois o design é um círculo preenchido */
-        }
-      `}</style>
+            background-color: #2DD4BF;
+          }
+        `}</style>
+      </div>
     </div>
   );
 };
