@@ -2,6 +2,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useCompanies } from './useCompanies';
+import { Database } from '@/integrations/supabase/types';
+
+type TransactionCategory = Database['public']['Enums']['transaction_category'];
+type TransactionType = Database['public']['Enums']['transaction_type'];
+type TransactionStatus = Database['public']['Enums']['transaction_status'];
 
 interface MonthlyRevenue {
   id: string;
@@ -19,9 +24,9 @@ interface Transaction {
   title: string;
   description: string;
   amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  status: 'pending' | 'completed';
+  type: TransactionType;
+  category: TransactionCategory;
+  status: TransactionStatus;
   due_date?: string;
   payment_date?: string;
   is_auto_generated?: boolean;
@@ -155,9 +160,9 @@ export function useFinancialData() {
         title: 'Pró-labore',
         description: `${getMonthName(month)} ${year}`,
         amount: proLaboreAmount,
-        type: 'expense' as const,
-        category: 'pro_labore',
-        status: 'completed' as const,
+        type: 'expense' as TransactionType,
+        category: 'pro_labore' as TransactionCategory,
+        status: 'completed' as TransactionStatus,
         is_auto_generated: true
       }
     ];
@@ -171,9 +176,9 @@ export function useFinancialData() {
         title: 'DAS - Simples Nacional',
         description: `referente a ${getMonthName(month)} ${year}`,
         amount: dasAmount,
-        type: 'expense' as const,
-        category: 'das',
-        status: 'pending' as const,
+        type: 'expense' as TransactionType,
+        category: 'das' as TransactionCategory,
+        status: 'pending' as TransactionStatus,
         is_auto_generated: true
       },
       {
@@ -183,9 +188,9 @@ export function useFinancialData() {
         title: 'INSS',
         description: `referente a ${getMonthName(month)} ${year}`,
         amount: inssAmount,
-        type: 'expense' as const,
-        category: 'inss',
-        status: 'pending' as const,
+        type: 'expense' as TransactionType,
+        category: 'inss' as TransactionCategory,
+        status: 'pending' as TransactionStatus,
         is_auto_generated: true
       }
     ];
@@ -219,7 +224,7 @@ export function useFinancialData() {
     }
   };
 
-  const updateTransaction = async (transactionId: string, updates: Partial<Transaction>) => {
+  const updateTransaction = async (transactionId: string, updates: Partial<Omit<Transaction, 'id' | 'company_id'>>) => {
     try {
       const { error } = await supabase
         .from('transactions')
