@@ -13,6 +13,7 @@ import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { TransactionCreateModal } from "@/components/TransactionCreateModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
 import { useTransactions, Transaction } from "@/hooks/useTransactions";
+import { useCompany } from "@/hooks/useCompany";
 
 // Define transaction types
 interface IncomeTransactionWithStatus {
@@ -46,8 +47,8 @@ function Index() {
   
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
   
-  // Mock company ID - in real app this would come from auth/context
-  const companyId = "123e4567-e89b-12d3-a456-426614174000";
+  // Get company from useCompany hook
+  const { company, isLoading: isCompanyLoading } = useCompany();
   
   // Calculate month and year from currentMonth index
   const currentYear = currentMonth < 12 ? 2025 : 2026;
@@ -56,14 +57,14 @@ function Index() {
   const {
     transactions,
     settings,
-    isLoading,
+    isLoading: isTransactionsLoading,
     balances,
     createTransaction,
     updateTransaction,
     deleteTransaction,
     updateSettings,
     calculateAutomaticTransactions
-  } = useTransactions(companyId, currentMonthNumber, currentYear);
+  } = useTransactions(company?.id || '', currentMonthNumber, currentYear);
 
   // Format currency for display
   const formatCurrency = (amount: number) => {
@@ -259,6 +260,14 @@ function Index() {
     );
   }
 
+  if (!company) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white">Erro ao carregar empresa</div>
+      </div>
+    );
+  }
+
   return (
     <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
       paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
@@ -267,7 +276,7 @@ function Index() {
       
       <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
       
-      <CompanyInfo companyName="Anderson Design" onRefreshClick={openCompanySwitcherModal} />
+      <CompanyInfo companyName={company.name} onRefreshClick={openCompanySwitcherModal} />
       
       <main className="w-full h-[1400px] relative">
         {/* ... keep existing code (background SVG) */}

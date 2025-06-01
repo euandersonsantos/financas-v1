@@ -33,7 +33,10 @@ export const useTransactions = (companyId: string, month: number, year: number) 
 
   // Fetch transactions
   const fetchTransactions = async () => {
-    if (!companyId) return;
+    if (!companyId) {
+      setTransactions([]);
+      return;
+    }
     
     const { data, error } = await supabase
       .from('transactions')
@@ -48,12 +51,16 @@ export const useTransactions = (companyId: string, month: number, year: number) 
       return;
     }
 
+    console.log('Fetched transactions:', data);
     setTransactions(data || []);
   };
 
   // Fetch company settings
   const fetchSettings = async () => {
-    if (!companyId) return;
+    if (!companyId) {
+      setSettings(null);
+      return;
+    }
     
     const { data, error } = await supabase
       .from('company_settings')
@@ -66,6 +73,7 @@ export const useTransactions = (companyId: string, month: number, year: number) 
       return;
     }
 
+    console.log('Fetched settings:', data);
     setSettings(data);
   };
 
@@ -204,6 +212,12 @@ export const useTransactions = (companyId: string, month: number, year: number) 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
+      
+      if (!companyId) {
+        setIsLoading(false);
+        return;
+      }
+      
       await Promise.all([fetchTransactions(), fetchSettings()]);
       setIsLoading(false);
     };
