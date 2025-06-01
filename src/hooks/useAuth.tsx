@@ -1,5 +1,5 @@
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 
@@ -18,39 +18,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
+    // Primeiro configurar o listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        console.log('Auth state changed:', session?.user?.email || 'No user');
         setUser(session?.user ?? null);
         setLoading(false);
       }
     );
 
+    // Depois verificar sessão existente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session?.user?.email || 'No user');
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error: error?.message };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { error: error?.message };
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { error: 'Erro ao fazer login' };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    return { error: error?.message };
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      return { error: error?.message };
+    } catch (error) {
+      console.error('Sign up error:', error);
+      return { error: 'Erro ao criar conta' };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
