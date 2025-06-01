@@ -12,6 +12,27 @@ import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
 
+// Define transaction types
+interface IncomeTransactionWithStatus {
+  id: string;
+  title: string;
+  description: string;
+  amount: string;
+  type: 'income';
+  status: 'pending' | 'completed';
+  date: string;
+}
+
+interface ExpenseTransactionWithStatus {
+  id: string;
+  title: string;
+  description: string;
+  amount: string;
+  type: 'expense';
+  status: 'pending' | 'completed';
+  date: string;
+}
+
 function Index() {
   const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
@@ -118,47 +139,47 @@ function Index() {
   }];
 
   // State for fechamento transactions with status
-  const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState([{
+  const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState<IncomeTransactionWithStatus[]>([{
     id: '1',
     title: 'Salário',
     description: 'Maio 2025',
     amount: 'R$ 10.500,00',
-    type: 'income' as const,
-    status: 'completed' as const,
+    type: 'income',
+    status: 'completed',
     date: '25 de Jun 2025'
   }]);
 
-  const [fechamentoExpenseTransactions, setFechamentoExpenseTransactions] = useState([{
+  const [fechamentoExpenseTransactions, setFechamentoExpenseTransactions] = useState<ExpenseTransactionWithStatus[]>([{
     id: '2',
     title: 'Pró-labore',
     description: 'Maio 2025',
     amount: 'R$ 2.950,50',
-    type: 'expense' as const,
-    status: 'completed' as const,
+    type: 'expense',
+    status: 'completed',
     date: '25 de Jun 2025'
   }, {
     id: '3',
     title: 'DAS - Simples nacional',
     description: 'referente a Abril 2025',
     amount: 'R$ 630,00',
-    type: 'expense' as const,
-    status: 'pending' as const,
+    type: 'expense',
+    status: 'pending',
     date: '25 de Jun 2025'
   }, {
     id: '4',
     title: 'INSS',
     description: 'referente a Abril 2025',
     amount: 'R$ 324,55',
-    type: 'expense' as const,
-    status: 'pending' as const,
+    type: 'expense',
+    status: 'pending',
     date: '25 de Jun 2025'
   }, {
     id: '5',
     title: 'Despesas',
     description: 'referente a Abril 2025',
     amount: 'R$ 112,13',
-    type: 'expense' as const,
-    status: 'completed' as const,
+    type: 'expense',
+    status: 'completed',
     date: '25 de Jun 2025'
   }]);
 
