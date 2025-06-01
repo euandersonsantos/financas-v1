@@ -11,6 +11,8 @@ import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { formatCurrency, calculateTotals, getDiscountCards, groupTransactionsByDate } from "@/utils/calculations";
 
 // Define transaction types
 interface IncomeTransactionWithStatus {
@@ -34,231 +36,115 @@ interface ExpenseTransactionWithStatus {
 }
 
 function Index() {
-  const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
+  const [currentMonth, setCurrentMonth] = useState(6); // July 2025 (index 6)
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
   const [isCompanySwitcherModalOpen, setIsCompanySwitcherModalOpen] = useState(false);
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
   
-  // Dados para aba de faturamento
-  const faturamentoDiscounts = [{
-    id: '1',
-    title: 'Pró-Labore',
-    amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
-    fontWeight: 'bold' as const,
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - SN',
-    amount: 'R$ 630,00',
-    description: '6% do faturamento',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    amount: 'R$ 324,55',
-    description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Despesas',
-    amount: 'R$ 112,13',
-    description: 'Outras despesas',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }];
+  // Get current month/year from the months array
+  const currentYear = currentMonth < 12 ? 2025 : 2026;
+  const monthNumber = (currentMonth % 12) + 1;
+  
+  const { 
+    company, 
+    settings, 
+    revenue, 
+    transactions, 
+    loading, 
+    updateTransaction, 
+    updateTransactionStatus,
+    refetch 
+  } = useCompanyData(monthNumber, currentYear);
 
-  // Dados para aba de fechamento - nova ordem e "Retiradas" no lugar de "Despesas"
-  const fechamentoDiscounts = [{
-    id: '1',
-    title: 'Pró-Labore',
-    amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
-    fontWeight: 'bold' as const,
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Retiradas',
-    amount: 'R$ 112,13',
-    description: 'Distr. de lucros',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - SN',
-    amount: 'R$ 630,00',
-    description: '6% do faturamento',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    amount: 'R$ 324,55',
-    description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }];
-
-  const faturamentoIncomeTransactions = [{
-    id: '1',
-    title: 'Salário',
-    description: 'Sensorama Design',
-    amount: 'R$ 10.500,00',
-    type: 'income' as const
-  }];
-
-  const faturamentoExpenseTransactions = [{
-    id: '1',
-    title: 'Pró-labore',
-    description: '100% do faturamento',
-    amount: 'R$ 2.950,50',
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - Simples nacional',
-    description: '6% do faturamento',
-    amount: 'R$ 630,00',
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    description: '11% do pro-labore',
-    amount: 'R$ 324,55',
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Despesas',
-    description: 'Outras despesas',
-    amount: 'R$ 112,13',
-    type: 'expense' as const
-  }];
-
-  // State for fechamento transactions with status - agrupados por data
-  const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState<IncomeTransactionWithStatus[]>([{
-    id: '1',
-    title: 'Salário',
-    description: 'Maio 2025',
-    amount: 'R$ 10.500,00',
-    type: 'income',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }]);
-
-  const [fechamentoExpenseTransactions, setFechamentoExpenseTransactions] = useState<ExpenseTransactionWithStatus[]>([{
-    id: '2',
-    title: 'Pró-labore',
-    description: 'Maio 2025',
-    amount: 'R$ 2.950,50',
-    type: 'expense',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }, {
-    id: '6',
-    title: 'Distribuição de lucros',
-    description: 'Maio 2025',
-    amount: 'R$ 112,13',
-    type: 'expense',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }, {
-    id: '3',
-    title: 'DAS - Simples nacional',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 630,00',
-    type: 'expense',
-    status: 'pending',
-    date: '20 de Jun 2025'
-  }, {
-    id: '4',
-    title: 'INSS',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 324,55',
-    type: 'expense',
-    status: 'pending',
-    date: '20 de Jun 2025'
-  }, {
-    id: '5',
-    title: 'Despesas',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 112,13',
-    type: 'expense',
-    status: 'completed',
-    date: '20 de Jun 2025'
-  }]);
+  // Calculate totals
+  const totals = transactions.length > 0 ? calculateTotals(transactions) : { income: 0, expenses: 0, balance: 0 };
+  
+  // Separate transactions by type
+  const incomeTransactions = transactions.filter(t => t.type === 'income');
+  const expenseTransactions = transactions.filter(t => t.type === 'expense');
+  
+  // Get discount cards from expense transactions
+  const discountCards = getDiscountCards(expenseTransactions, activeTab === 'fechamento');
+  
+  // Group transactions by date for closing tab
+  const groupedTransactions = activeTab === 'fechamento' ? groupTransactionsByDate(transactions) : {};
 
   const handleMonthChange = (monthIndex: number) => {
     setCurrentMonth(monthIndex);
   };
+
   const handleTabChange = (tab: 'faturamento' | 'fechamento') => {
     setActiveTab(tab);
   };
+
   const handleBottomNavChange = (tab: string) => {
     setBottomNavTab(tab);
   };
+
   const handleAddTransaction = () => {
     console.log('Add transaction clicked');
   };
+
   const handleDiscountClick = (discount: any) => {
-    // Convert discount to transaction format for the modal
-    const transactionFromDiscount = {
-      id: discount.id,
-      title: discount.title,
-      amount: discount.amount,
-      description: discount.description,
-      type: discount.type
-    };
-    setSelectedTransaction(transactionFromDiscount);
-    setIsEditModalOpen(true);
-    console.log('Discount clicked:', discount);
+    // Find the full transaction data
+    const fullTransaction = transactions.find(t => t.id === discount.id);
+    if (fullTransaction) {
+      setSelectedTransaction({
+        ...fullTransaction,
+        amount: formatCurrency(fullTransaction.amount)
+      });
+      setIsEditModalOpen(true);
+    }
   };
+
   const handleTransactionClick = (transaction: any) => {
-    setSelectedTransaction(transaction);
-    setIsEditModalOpen(true);
-    console.log('Transaction clicked:', transaction);
+    // Find the full transaction data
+    const fullTransaction = transactions.find(t => t.id === transaction.id);
+    if (fullTransaction) {
+      setSelectedTransaction({
+        ...fullTransaction,
+        amount: formatCurrency(fullTransaction.amount)
+      });
+      setIsEditModalOpen(true);
+    }
   };
-  const handleSaveTransaction = (updatedTransaction: any) => {
-    console.log('Transaction saved:', updatedTransaction);
+
+  const handleSaveTransaction = async (updatedTransaction: any) => {
+    if (updatedTransaction.id) {
+      // Convert currency string back to number
+      const amountString = updatedTransaction.amount.replace(/[R$\s.]/g, '').replace(',', '.');
+      const amount = parseFloat(amountString);
+      
+      await updateTransaction(updatedTransaction.id, {
+        title: updatedTransaction.title,
+        description: updatedTransaction.description,
+        amount: amount
+      });
+    }
     setIsEditModalOpen(false);
   };
 
-  const handleStatusChange = (transactionId: string, newStatus: 'pending' | 'completed') => {
-    console.log('Status changed:', transactionId, newStatus);
-    
-    // Update income transactions
-    setFechamentoIncomeTransactions(prev => 
-      prev.map(transaction => 
-        transaction.id === transactionId 
-          ? { ...transaction, status: newStatus }
-          : transaction
-      )
-    );
-    
-    // Update expense transactions
-    setFechamentoExpenseTransactions(prev => 
-      prev.map(transaction => 
-        transaction.id === transactionId 
-          ? { ...transaction, status: newStatus }
-          : transaction
-      )
-    );
+  const handleStatusChange = async (transactionId: string, newStatus: 'pending' | 'completed') => {
+    await updateTransactionStatus(transactionId, newStatus);
   };
 
   const openCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(true);
   const closeCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(false);
+
   const handleSelectCompany = (companyId: string) => {
     console.log('Company selected:', companyId);
   };
+
   const handleRefresh = async () => {
     console.log('Refreshing data...');
-    // Simular carregamento
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await refetch();
     console.log('Data refreshed!');
   };
+
   const {
     scrollableRef,
     isRefreshing,
@@ -269,24 +155,33 @@ function Index() {
     threshold: 80
   });
 
-  // Definir dados baseados na aba ativa
-  const currentDiscounts = activeTab === 'faturamento' ? faturamentoDiscounts : fechamentoDiscounts;
-  const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
-  const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
-  const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
-  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
-  const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Principais descontos';
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto flex items-center justify-center">
+        <div className="text-white">Carregando...</div>
+      </div>
+    );
+  }
 
-  return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
-    paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
-  }}>
+  // Revenue summary data
+  const revenueSummaryTitle = activeTab === 'faturamento' 
+    ? formatCurrency(totals.income) 
+    : formatCurrency(totals.balance);
+  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
+
+  return (
+    <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
+      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
+    }}>
       <PullToRefreshIndicator isVisible={shouldShowIndicator} isRefreshing={isRefreshing} pullDistance={pullDistance} threshold={80} />
       
       <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
       
-      <CompanyInfo companyName="Anderson Design" onRefreshClick={openCompanySwitcherModal} />
+      <CompanyInfo companyName={company?.name || "Anderson Design"} onRefreshClick={openCompanySwitcherModal} />
       
       <main className="w-full h-[1400px] relative">
+        {/* ... keep existing code (SVG background) */}
         <div className="w-full h-full relative">
           <svg className="w-full h-full absolute inset-0" viewBox="0 0 402 1400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
             <path d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" fill="url(#paint0_linear_background)" />
@@ -320,8 +215,8 @@ function Index() {
           
           <div className="pb-8 w-full">
             <DiscountGrid 
-              title={discountGridTitle} 
-              discounts={currentDiscounts} 
+              title="Principais descontos" 
+              discounts={discountCards} 
               onDiscountClick={handleDiscountClick}
             />
           </div>
@@ -329,14 +224,30 @@ function Index() {
       </main>
       
       <TransactionSheet 
-        month="Maio 2025" 
-        incomeTotal="R$ 10,500,00" 
-        expenseTotal="R$ 4.017,18" 
-        incomeTransactions={currentIncomeTransactions} 
-        expenseTransactions={currentExpenseTransactions} 
-        entryTotal="R$ 10.500,00" 
-        exitTotal="R$ 4.017,18" 
-        balance="R$ 6.482,82" 
+        month={months[currentMonth]} 
+        incomeTotal={formatCurrency(totals.income)} 
+        expenseTotal={formatCurrency(totals.expenses)} 
+        incomeTransactions={incomeTransactions.map(t => ({
+          id: t.id,
+          title: t.title,
+          description: t.description || '',
+          amount: formatCurrency(t.amount),
+          type: t.type as 'income',
+          status: t.status,
+          date: t.due_date || '2025-07-25'
+        }))} 
+        expenseTransactions={expenseTransactions.map(t => ({
+          id: t.id,
+          title: t.title,
+          description: t.description || '',
+          amount: formatCurrency(t.amount),
+          type: t.type as 'expense',
+          status: t.status,
+          date: t.due_date || '2025-07-25'
+        }))} 
+        entryTotal={formatCurrency(totals.income)} 
+        exitTotal={formatCurrency(totals.expenses)} 
+        balance={formatCurrency(totals.balance)} 
         onAddTransaction={handleAddTransaction} 
         onTransactionClick={handleTransactionClick}
         showStatus={activeTab === 'fechamento'}
@@ -360,6 +271,8 @@ function Index() {
         onSelectCompany={handleSelectCompany}
         onRegisterNewCompany={() => console.log('Register new company clicked')}
       />
-    </div>;
+    </div>
+  );
 }
+
 export default Index;
