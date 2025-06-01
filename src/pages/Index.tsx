@@ -73,13 +73,20 @@ function Index() {
     type: 'expense' as const
   }];
 
-  // Dados para aba de fechamento (mesmo valores mas descrições diferentes)
+  // Dados para aba de fechamento - nova ordem e "Retiradas" no lugar de "Despesas"
   const fechamentoDiscounts = [{
     id: '1',
     title: 'Pró-Labore',
     amount: 'R$ 2.950,50',
     description: '100% do faturamento',
     fontWeight: 'bold' as const,
+    type: 'expense' as const
+  }, {
+    id: '4',
+    title: 'Retiradas',
+    amount: 'R$ 112,13',
+    description: 'Distr. de lucros',
+    fontWeight: 'extrabold' as const,
     type: 'expense' as const
   }, {
     id: '2',
@@ -93,13 +100,6 @@ function Index() {
     title: 'INSS',
     amount: 'R$ 324,55',
     description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Despesas',
-    amount: 'R$ 112,13',
-    description: 'Outras despesas',
     fontWeight: 'extrabold' as const,
     type: 'expense' as const
   }];
@@ -154,6 +154,14 @@ function Index() {
     title: 'Pró-labore',
     description: 'Maio 2025',
     amount: 'R$ 2.950,50',
+    type: 'expense',
+    status: 'completed',
+    date: '25 de Jun 2025'
+  }, {
+    id: '6',
+    title: 'Distribuição de lucros',
+    description: 'Maio 2025',
+    amount: 'R$ 112,13',
     type: 'expense',
     status: 'completed',
     date: '25 de Jun 2025'
@@ -266,7 +274,7 @@ function Index() {
   const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
   const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
   const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
-  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo';
+  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
   const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Principais descontos';
 
   return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
