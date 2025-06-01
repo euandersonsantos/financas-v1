@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { CompanyInfo } from "@/components/CompanyInfo";
 import { MonthNavigation } from "@/components/MonthNavigation";
@@ -11,6 +11,11 @@ import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
+import { AuthModal } from "@/components/AuthModal";
+import { CompanySetupModal } from "@/components/CompanySetupModal";
+import { useAuth } from "@/hooks/useAuth";
+import { useCompanies } from "@/hooks/useCompanies";
+import { Button } from "@/components/ui/button";
 
 // Define transaction types
 interface IncomeTransactionWithStatus {
@@ -34,12 +39,32 @@ interface ExpenseTransactionWithStatus {
 }
 
 function Index() {
-  const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { companies, currentCompany, companySettings, loading: companiesLoading } = useCompanies();
+  
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [companySetupModalOpen, setCompanySetupModalOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(6);
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
   const [isCompanySwitcherModalOpen, setIsCompanySwitcherModalOpen] = useState(false);
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+
+  // Show auth modal if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setAuthModalOpen(true);
+    }
+  }, [authLoading, user]);
+
+  // Show company setup modal if no companies exist
+  useEffect(() => {
+    if (user && !companiesLoading && companies.length === 0) {
+      setCompanySetupModalOpen(true);
+    }
+  }, [user, companiesLoading, companies]);
+
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
   
   // Dados para aba de faturamento
@@ -47,21 +72,21 @@ function Index() {
     id: '1',
     title: 'Pró-Labore',
     amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
+    description: `${companySettings?.pro_labore_percentage || 28.1}% do faturamento`,
     fontWeight: 'bold' as const,
     type: 'expense' as const
   }, {
     id: '2',
     title: 'DAS - SN',
     amount: 'R$ 630,00',
-    description: '6% do faturamento',
+    description: `${companySettings?.das_percentage || 6}% do faturamento`,
     fontWeight: 'extrabold' as const,
     type: 'expense' as const
   }, {
     id: '3',
     title: 'INSS',
     amount: 'R$ 324,55',
-    description: '11% do pró-labore',
+    description: `${companySettings?.inss_percentage || 11}% do pró-labore`,
     fontWeight: 'extrabold' as const,
     type: 'expense' as const
   }, {
@@ -253,12 +278,13 @@ function Index() {
   const handleSelectCompany = (companyId: string) => {
     console.log('Company selected:', companyId);
   };
+
   const handleRefresh = async () => {
     console.log('Refreshing data...');
-    // Simular carregamento
     await new Promise(resolve => setTimeout(resolve, 1500));
     console.log('Data refreshed!');
   };
+
   const {
     scrollableRef,
     isRefreshing,
@@ -269,22 +295,82 @@ function Index() {
     threshold: 80
   });
 
+  // Show loading state
+  if (authLoading || (user && companiesLoading)) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white">Carregando...</div>
+      </div>
+    );
+  }
+
+  // Show auth required state
+  if (!user) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-2xl mb-4">Gestão Fiscal</h1>
+          <p className="mb-4">Faça login para acessar o sistema</p>
+          <Button onClick={() => setAuthModalOpen(true)}>
+            Fazer Login
+          </Button>
+        </div>
+        <AuthModal 
+          isOpen={authModalOpen} 
+          onClose={() => setAuthModalOpen(false)} 
+        />
+      </div>
+    );
+  }
+
+  // Show company setup required state
+  if (companies.length === 0) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-2xl mb-4">Bem-vindo!</h1>
+          <p className="mb-4">Configure sua primeira empresa para começar</p>
+          <Button onClick={() => setCompanySetupModalOpen(true)}>
+            Configurar Empresa
+          </Button>
+          <div className="mt-4">
+            <Button variant="outline" onClick={signOut}>
+              Sair
+            </Button>
+          </div>
+        </div>
+        <CompanySetupModal 
+          isOpen={companySetupModalOpen} 
+          onClose={() => setCompanySetupModalOpen(false)} 
+        />
+      </div>
+    );
+  }
+
   // Definir dados baseados na aba ativa
-  const currentDiscounts = activeTab === 'faturamento' ? faturamentoDiscounts : fechamentoDiscounts;
+  const currentDiscounts = activeTab === 'faturamento' ? faturamentoDiscounts : [];
   const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
   const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
   const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
   const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
   const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Principais descontos';
 
-  return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
-    paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
-  }}>
+  return (
+    <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
+      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
+    }}>
       <PullToRefreshIndicator isVisible={shouldShowIndicator} isRefreshing={isRefreshing} pullDistance={pullDistance} threshold={80} />
       
-      <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
+      <Header 
+        title="Gestão fiscal" 
+        onBackClick={() => console.log('Back clicked')} 
+        onSettingsClick={() => setAuthModalOpen(true)} 
+      />
       
-      <CompanyInfo companyName="Anderson Design" onRefreshClick={openCompanySwitcherModal} />
+      <CompanyInfo 
+        companyName={currentCompany?.name || "Carregando..."} 
+        onRefreshClick={() => setIsCompanySwitcherModalOpen(true)} 
+      />
       
       <main className="w-full h-[1400px] relative">
         <div className="w-full h-full relative">
@@ -304,12 +390,12 @@ function Index() {
         </div>
         
         <div className="absolute w-full flex flex-col items-center gap-3 px-4 left-0 top-6 sm:px-[21px]">
-          <MonthNavigation months={months} currentMonth={currentMonth} onMonthChange={handleMonthChange} />
+          <MonthNavigation months={months} currentMonth={currentMonth} onMonthChange={setCurrentMonth} />
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
         <div className="absolute w-full flex flex-col items-start gap-8 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
-          <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
           
           <RevenueSummary 
             totalRevenue={revenueSummaryTitle} 
@@ -322,7 +408,10 @@ function Index() {
             <DiscountGrid 
               title={discountGridTitle} 
               discounts={currentDiscounts} 
-              onDiscountClick={handleDiscountClick}
+              onDiscountClick={(discount) => {
+                setSelectedTransaction(discount);
+                setIsEditModalOpen(true);
+              }}
             />
           </div>
         </div>
@@ -356,10 +445,12 @@ function Index() {
 
       <CompanySwitcherModal
         isOpen={isCompanySwitcherModalOpen}
-        onClose={closeCompanySwitcherModal}
-        onSelectCompany={handleSelectCompany}
-        onRegisterNewCompany={() => console.log('Register new company clicked')}
+        onClose={() => setIsCompanySwitcherModalOpen(false)}
+        onSelectCompany={() => console.log('Company selected')}
+        onRegisterNewCompany={() => setCompanySetupModalOpen(true)}
       />
-    </div>;
+    </div>
+  );
 }
+
 export default Index;
