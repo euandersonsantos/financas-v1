@@ -4,7 +4,7 @@ import React from 'react';
 interface TransactionStatusProps {
   status: 'pending' | 'completed';
   className?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 export const TransactionStatus: React.FC<TransactionStatusProps> = ({
