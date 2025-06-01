@@ -2,35 +2,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { Database } from '@/integrations/supabase/types';
 
-interface Company {
-  id: string;
-  name: string;
-  user_id: string;
-}
-
-interface CompanySettings {
-  das_percentage: number;
-  pro_labore_percentage: number;
-  inss_percentage: number;
-  accounting_fee: number;
-}
-
-interface MonthlyRevenue {
-  total_revenue: number;
-}
-
-interface Transaction {
-  id: string;
-  title: string;
-  description: string;
-  amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  status: 'pending' | 'completed';
-  due_date: string;
-  payment_date?: string;
-}
+type Company = Database['public']['Tables']['companies']['Row'];
+type CompanySettings = Database['public']['Tables']['company_settings']['Row'];
+type MonthlyRevenue = Database['public']['Tables']['monthly_revenue']['Row'];
+type Transaction = Database['public']['Tables']['transactions']['Row'];
 
 export const useCompanyData = (month: number, year: number) => {
   const [company, setCompany] = useState<Company | null>(null);
@@ -156,7 +133,15 @@ export const useCompanyData = (month: number, year: number) => {
       if (revenueError && revenueError.code !== 'PGRST116') {
         throw revenueError;
       }
-      setRevenue(revenueData || { total_revenue: 0 });
+      setRevenue(revenueData || { 
+        id: '', 
+        company_id: companyData.id, 
+        month, 
+        year, 
+        total_revenue: 0, 
+        created_at: '', 
+        updated_at: '' 
+      });
 
       // Get transactions
       const { data: transactionsData, error: transactionsError } = await supabase
@@ -181,7 +166,7 @@ export const useCompanyData = (month: number, year: number) => {
     }
   };
 
-  const updateTransaction = async (transactionId: string, updates: Partial<Transaction>) => {
+  const updateTransaction = async (transactionId: string, updates: Partial<Pick<Transaction, 'title' | 'description' | 'amount' | 'status' | 'payment_date'>>) => {
     try {
       const { error } = await supabase
         .from('transactions')

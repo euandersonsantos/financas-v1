@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { CompanyInfo } from "@/components/CompanyInfo";
@@ -13,27 +14,6 @@ import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
 import { useCompanyData } from "@/hooks/useCompanyData";
 import { formatCurrency, calculateTotals, getDiscountCards, groupTransactionsByDate } from "@/utils/calculations";
-
-// Define transaction types
-interface IncomeTransactionWithStatus {
-  id: string;
-  title: string;
-  description: string;
-  amount: string;
-  type: 'income';
-  status: 'pending' | 'completed';
-  date: string;
-}
-
-interface ExpenseTransactionWithStatus {
-  id: string;
-  title: string;
-  description: string;
-  amount: string;
-  type: 'expense';
-  status: 'pending' | 'completed';
-  date: string;
-}
 
 function Index() {
   const [currentMonth, setCurrentMonth] = useState(6); // July 2025 (index 6)
@@ -68,7 +48,7 @@ function Index() {
   const expenseTransactions = transactions.filter(t => t.type === 'expense');
   
   // Get discount cards from expense transactions
-  const discountCards = getDiscountCards(expenseTransactions, activeTab === 'fechamento');
+  const discountCards = getDiscountCards(transactions, activeTab === 'fechamento');
   
   // Group transactions by date for closing tab
   const groupedTransactions = activeTab === 'fechamento' ? groupTransactionsByDate(transactions) : {};
@@ -181,7 +161,6 @@ function Index() {
       <CompanyInfo companyName={company?.name || "Anderson Design"} onRefreshClick={openCompanySwitcherModal} />
       
       <main className="w-full h-[1400px] relative">
-        {/* ... keep existing code (SVG background) */}
         <div className="w-full h-full relative">
           <svg className="w-full h-full absolute inset-0" viewBox="0 0 402 1400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
             <path d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" fill="url(#paint0_linear_background)" />
