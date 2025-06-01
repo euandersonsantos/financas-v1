@@ -79,6 +79,31 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
 
   if (!isOpen) return null;
 
+  const customRadioStyles = `
+    .custom-radio {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #D1D5DB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .custom-radio.selected {
+      border-color: #2DD4BF;
+      background-color: #2DD4BF;
+    }
+    .custom-radio.selected::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #2DD4BF;
+    }
+  `;
+
   return (
     <div 
       className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
@@ -86,6 +111,7 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
       }`}
       onClick={handleClose}
     >
+      <style dangerouslySetInnerHTML={{ __html: customRadioStyles }} />
       <div
         className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-[61] transition-all duration-300 ease-out shadow-xl ${
           isClosing ? 'translate-y-full' : 'translate-y-0'
@@ -142,32 +168,6 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
             Aplicar
           </Button>
         </div>
-
-        {/* Custom styles for radio button */}
-        <style jsx>{`
-          .custom-radio {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid #D1D5DB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-          }
-          .custom-radio.selected {
-            border-color: #2DD4BF;
-            background-color: #2DD4BF;
-          }
-          .custom-radio.selected::after {
-            content: '';
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #2DD4BF;
-          }
-        `}</style>
       </div>
     </div>
   );
