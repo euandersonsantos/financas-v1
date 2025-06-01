@@ -91,10 +91,10 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
               
               <div className="flex justify-between items-center w-full px-0">
                 <div className="flex flex-col items-start">
-                  <h3 className="text-[#43464D] font-bold tracking-[0.16px] text-base">
+                  <h3 className="text-[#43464D] tracking-[0.16px] font-bold text-sm">
                     Saldo do mês anterior
                   </h3>
-                  <p className="text-[#5E626C] font-medium text-sm tracking-[0.12px] max-sm:text-xs">
+                  <p className="text-[#5E626C] font-medium tracking-[0.12px] text-xs">
                     Maio 2025
                   </p>
                 </div>
