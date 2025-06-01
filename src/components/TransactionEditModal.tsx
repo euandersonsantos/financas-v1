@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -11,47 +12,27 @@ interface TransactionEditModalProps {
     id: string;
     title: string;
     description: string;
-    amount: number;
+    amount: string;
     type: 'income' | 'expense';
-    category?: string;
-    status?: string;
   } | null;
   onSave: (transaction: any) => void;
-  onDelete?: (transactionId: string) => void;
 }
 
 export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
   isOpen,
   onClose,
   transaction,
-  onSave,
-  onDelete
+  onSave
 }) => {
   const [currentScreen, setCurrentScreen] = useState<'edit' | 'value'>('edit');
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('0');
-  const [type, setType] = useState<'income' | 'expense'>('expense');
-  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState(transaction?.title || '');
+  const [amount, setAmount] = useState(transaction?.amount.replace(/[R$\s+-]/g, '') || '');
+  const [description, setDescription] = useState(transaction?.description || '');
   const [dueDate, setDueDate] = useState('25');
   const [recurrence, setRecurrence] = useState('Mensal');
-  const [newValue, setNewValue] = useState('0');
+  const [newValue, setNewValue] = useState('295050'); // R$ 2.950,50 in cents
   const [isClosing, setIsClosing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Initialize form with transaction data
-  useEffect(() => {
-    if (transaction && isOpen) {
-      setTitle(transaction.title);
-      setDescription(transaction.description || '');
-      const amountInCents = Math.round(transaction.amount * 100).toString();
-      setAmount(amountInCents);
-      setNewValue(amountInCents);
-      setType(transaction.type);
-      setCategory(transaction.category || '');
-      setCurrentScreen('edit');
-    }
-  }, [transaction, isOpen]);
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -79,7 +60,7 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           preventScroll: true
         });
         inputRef.current?.select();
-      }, 100);
+      }, 100); // Reduced timeout for faster response
     }
   }, [currentScreen]);
 
@@ -102,25 +83,11 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     });
   };
 
-  const getCategoryOptions = () => {
-    if (type === 'income') {
-      return [
-        { value: 'other_income', label: 'Outras receitas' }
-      ];
-    } else {
-      return [
-        { value: 'pro_labore', label: 'Pró-labore' },
-        { value: 'das', label: 'DAS - Simples Nacional' },
-        { value: 'inss', label: 'INSS' },
-        { value: 'accounting', label: 'Contabilidade' },
-        { value: 'other_expense', label: 'Outras despesas' }
-      ];
-    }
-  };
-
-  const getCategoryLabel = (cat: string) => {
-    const option = getCategoryOptions().find(opt => opt.value === cat);
-    return option?.label || cat;
+  const calculatePercentage = () => {
+    const totalRevenue = 10500; // Based on the mock data
+    const amountValue = parseInt(amount) / 100;
+    if (isNaN(amountValue)) return '0.0';
+    return (amountValue / totalRevenue * 100).toFixed(1);
   };
 
   const calculateDifference = () => {
@@ -152,10 +119,8 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
     const updatedTransaction = {
       ...transaction,
       title,
-      description,
-      amount: parseInt(currentScreen === 'value' ? newValue : amount) / 100,
-      type,
-      category
+      amount: formatCurrency(currentScreen === 'value' ? newValue : amount),
+      description
     };
     onSave(updatedTransaction);
     setIsClosing(true);
@@ -164,20 +129,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
       setIsClosing(false);
       setCurrentScreen('edit');
     }, 300);
-  };
-
-  const handleDelete = () => {
-    if (transaction && onDelete) {
-      if (confirm('Tem certeza que deseja excluir esta transação?')) {
-        onDelete(transaction.id);
-        setIsClosing(true);
-        setTimeout(() => {
-          onClose();
-          setIsClosing(false);
-          setCurrentScreen('edit');
-        }, 300);
-      }
-    }
   };
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,70 +163,32 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
           <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute'}`}>
             {/* Edit Screen Content */}
             <h1 className="text-xl font-semibold text-gray-800 mb-1">
-              Editar transação
+              Editar lançamento - Março 2025
             </h1>
-            <p className="text-gray-500 text-sm mb-1">{getCategoryLabel(category)}</p>
+            <p className="text-gray-500 text-sm mb-1">Pró-Labore</p>
             <p className="text-3xl font-bold mb-1 bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent">
               {formatCurrency(amount)}
             </p>
-            <p className="text-gray-500 text-xs">{type === 'income' ? 'Receita' : 'Despesa'}</p>
+            <p className="text-gray-500 text-xs">100% do faturamento</p>
+
+            {/* Dashed Border Section */}
+            <div className="border-t border-b border-dashed border-gray-200 -mx-4 px-4 py-4 my-6 space-y-3">
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-600 font-semibold">Valor total do faturamento</p>
+                <p className="text-sm text-gray-800 font-semibold">R$ 10.500,00</p>
+              </div>
+              <div className="flex justify-between items-center mb-3">
+                <p className="text-sm text-gray-600 font-semibold">% de desconto</p>
+                <p className="text-sm text-gray-800 font-semibold">{calculatePercentage()}%</p>
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-600 font-semibold">Valor do pró-labore</p>
+                <p className="text-sm text-gray-800 font-semibold">{formatCurrency(amount)}</p>
+              </div>
+            </div>
 
             {/* Form Fields */}
-            <div className="space-y-4 my-6 mb-24">
-              {/* Title */}
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600 font-semibold">Título</label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Description */}
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600 font-semibold">Descrição</label>
-                <Input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Type */}
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600 font-semibold">Tipo</label>
-                <Select value={type} onValueChange={(value: 'income' | 'expense') => {
-                  setType(value);
-                  setCategory(''); // Reset category when type changes
-                }}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="income">Receita</SelectItem>
-                    <SelectItem value="expense">Despesa</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Category */}
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600 font-semibold">Categoria</label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getCategoryOptions().map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
+            <div className="space-y-4 mb-20">
               {/* Due Date */}
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600 font-semibold">Data de vencimento</p>
@@ -287,7 +200,9 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                       </div>
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
-                      {Array.from({ length: 31 }, (_, i) => (
+                      {Array.from({
+                        length: 31
+                      }, (_, i) => (
                         <SelectItem key={i + 1} value={String(i + 1)}>
                           Dia {i + 1}
                         </SelectItem>
@@ -308,7 +223,6 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                       </div>
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-gray-200 shadow-lg z-[70]">
-                      <SelectItem value="Única">Única</SelectItem>
                       <SelectItem value="Semanal">Semanal</SelectItem>
                       <SelectItem value="Mensal">Mensal</SelectItem>
                       <SelectItem value="Trimestral">Trimestral</SelectItem>
@@ -320,29 +234,22 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons for Edit Screen */}
-          <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62] space-y-3`}>
+          {/* Continue Button */}
+          <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'edit' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]`}>
             <Button onClick={handleContinue} className="w-full bg-black text-white font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]" style={{
               borderRadius: '16px'
             }}>
               Continuar
             </Button>
-            {onDelete && (
-              <Button onClick={handleDelete} variant="outline" className="w-full font-semibold text-center border-red-500 text-red-500 hover:bg-red-50 transition-colors h-[52px]" style={{
-                borderRadius: '16px'
-              }}>
-                Excluir transação
-              </Button>
-            )}
           </div>
 
           <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'}`}>
             {/* Value Edit Screen */}
             <div className="mt-8 w-full">
               <h1 className="text-xl font-semibold text-gray-800 mb-1">
-                Editar o valor
+                Editar o valor do Pró-labore
               </h1>
-              <p className="text-gray-500 text-sm mb-4">Ajuste o valor da transação</p>
+              <p className="text-gray-500 text-sm mb-4">Ajuste o valor do novo pró-labore</p>
 
               {/* Value Input */}
               <div className="mb-6">
@@ -365,14 +272,17 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
               <div className="pb-20">
                 {/* Comparison Section */}
                 <div className="space-y-3 mb-6 font-semibold">
+                  {/* Value Previous */}
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-600 font-semibold">Valor anterior</p>
                     <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(amount)}</p>
                   </div>
+                  {/* Value Adjusted */}
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-600 font-semibold">Valor ajustado</p>
                     <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(newValue)}</p>
                   </div>
+                  {/* Difference */}
                   <div className="flex justify-between items-center font-semibold">
                     <p className="text-sm text-gray-600 font-semibold">Diferença</p>
                     <p className="text-sm text-gray-800 font-semibold">R$ {formatCurrencyDisplay(String(calculateDifference()))}</p>
@@ -385,15 +295,16 @@ export const TransactionEditModal: React.FC<TransactionEditModalProps> = ({
                 {/* Revision Section */}
                 <div className="mb-6">
                   <p className="text-base font-semibold text-gray-800 mb-2">Revisão do novo valor</p>
-                  <p className="text-sm text-gray-800 mb-1">{title}</p>
+                  <p className="text-sm text-gray-800 mb-1">Pró-Labore</p>
+                  {/* New Value */}
                   <p className="text-2xl font-bold bg-gradient-to-r from-[#7637EA] to-[#FF7A00] bg-clip-text text-transparent mb-1">
                     R$ {formatCurrencyDisplay(newValue)}
                   </p>
-                  <p className="text-sm text-gray-500">{recurrence} - Dia {dueDate}</p>
+                  <p className="text-sm text-gray-500">Mensal - Dia {dueDate}</p>
                 </div>
               </div>
               
-              {/* Save Button */}
+              {/* Save Button - Positioned absolutely */}
               <div className={`transition-all duration-300 ease-in-out ${currentScreen === 'value' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full absolute'} absolute bottom-0 left-0 right-0 px-4 pt-4 pb-6 bg-white z-[62]`}>
                 <Button onClick={handleSave} className="w-full bg-black text-white font-semibold text-center hover:bg-gray-800 transition-colors h-[52px]" style={{
                   borderRadius: '16px'

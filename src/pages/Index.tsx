@@ -15,132 +15,311 @@ import { AuthModal } from "@/components/AuthModal";
 import { CompanySetupModal } from "@/components/CompanySetupModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
-import { useFinancialData } from "@/hooks/useFinancialData";
-import { TransactionCreateModal } from "@/components/TransactionCreateModal";
+import { useMonthlyRevenue } from "@/hooks/useMonthlyRevenue";
+import { useTransactions } from "@/hooks/useTransactions";
+import { Button } from "@/components/ui/button";
 
-// Define transaction types
-interface IncomeTransactionWithStatus {
+interface Transaction {
   id: string;
   title: string;
   description: string;
   amount: string;
-  type: 'income';
-  status: 'pending' | 'completed';
-  date: string;
-}
-
-interface ExpenseTransactionWithStatus {
-  id: string;
-  title: string;
-  description: string;
-  amount: string;
-  type: 'expense';
-  status: 'pending' | 'completed';
-  date: string;
+  type: 'income' | 'expense';
+  status?: 'pending' | 'completed';
+  date?: string;
 }
 
 function Index() {
-  const { user, loading: authLoading } = useAuth();
-  const { companies, selectedCompany, companySettings, loading: companiesLoading } = useCompanies();
-  const { monthlyRevenue, transactions, loading: financialLoading, fetchMonthlyData, updateRevenue, createTransaction, updateTransaction, deleteTransaction } = useFinancialData();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { companies, currentCompany, companySettings, loading: companiesLoading } = useCompanies();
   
-  const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
-  const [currentYear, setCurrentYear] = useState(2025);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [companySetupModalOpen, setCompanySetupModalOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(5); // Junho (index 5)
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isCompanySetupModalOpen, setIsCompanySetupModalOpen] = useState(false);
   const [isCompanySwitcherModalOpen, setIsCompanySwitcherModalOpen] = useState(false);
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  
-  const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
 
-  // Verificar se usuário está logado
+  // Hooks para dados dinâmicos
+  const { 
+    fetchMonthlyRevenue, 
+    createOrUpdateMonthlyRevenue, 
+    calculateTaxes, 
+    fetchCalculatedTaxes,
+    fetchTaxesForPayment 
+  } = useMonthlyRevenue(currentCompany?.id || null);
+  
+  const { 
+    transactions, 
+    fetchTransactions, 
+    updateTransaction,
+    generateAutoTransactions 
+  } = useTransactions(currentCompany?.id || null);
+
+  // Estados para dados calculados
+  const [monthlyRevenue, setMonthlyRevenue] = useState<any>(null);
+  const [calculatedTaxes, setCalculatedTaxes] = useState<any>(null);
+  const [taxesForPayment, setTaxesForPayment] = useState<any>(null);
+
+  // Show auth modal if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      setIsAuthModalOpen(true);
+      setAuthModalOpen(true);
     }
   }, [authLoading, user]);
 
-  // Verificar se usuário tem empresas
+  // Show company setup modal if no companies exist
   useEffect(() => {
     if (user && !companiesLoading && companies.length === 0) {
-      setIsCompanySetupModalOpen(true);
+      setCompanySetupModalOpen(true);
     }
   }, [user, companiesLoading, companies]);
 
-  // Carregar dados financeiros quando empresa ou mês mudar
+  // Carregar dados quando empresa ou mês mudarem
   useEffect(() => {
-    if (selectedCompany) {
-      fetchMonthlyData(currentMonth + 1, currentYear); // currentMonth is 0-based, but we store 1-based
+    if (currentCompany && companySettings) {
+      loadMonthData();
     }
-  }, [selectedCompany, currentMonth, currentYear, fetchMonthlyData]);
+  }, [currentCompany, companySettings, currentMonth]);
+
+  const loadMonthData = async () => {
+    if (!currentCompany || !companySettings) return;
+    
+    const year = 2025; // Ano fixo por enquanto
+    const month = currentMonth + 1; // currentMonth é 0-based, mas no banco é 1-based
+    
+    try {
+      // Buscar receita mensal
+      const revenue = await fetchMonthlyRevenue(month, year);
+      setMonthlyRevenue(revenue);
+      
+      // Se não há receita, criar com valor padrão
+      if (!revenue) {
+        const defaultRevenue = 10500; // Valor padrão
+        const newRevenue = await createOrUpdateMonthlyRevenue(month, year, defaultRevenue);
+        if (newRevenue.data) {
+          setMonthlyRevenue(newRevenue.data);
+          
+          // Calcular impostos automaticamente
+          const taxes = await calculateTaxes(month, year, defaultRevenue, {
+            pro_labore_percentage: companySettings.pro_labore_percentage,
+            inss_percentage: companySettings.inss_percentage,
+            das_percentage: companySettings.das_percentage
+          });
+          
+          if (taxes.data) {
+            setCalculatedTaxes(taxes.data);
+            
+            // Gerar transações automáticas
+            await generateAutoTransactions(
+              month,
+              year,
+              {
+                pro_labore_amount: taxes.data.pro_labore_amount,
+                inss_amount: taxes.data.inss_amount,
+                das_amount: taxes.data.das_amount
+              },
+              defaultRevenue,
+              companySettings.accounting_fee
+            );
+          }
+        }
+      } else {
+        // Buscar impostos calculados
+        const taxes = await fetchCalculatedTaxes(month, year);
+        setCalculatedTaxes(taxes);
+      }
+      
+      // Buscar impostos para pagamento neste mês
+      const paymentTaxes = await fetchTaxesForPayment(month, year);
+      setTaxesForPayment(paymentTaxes);
+      
+      // Buscar transações
+      await fetchTransactions(month, year);
+      
+    } catch (error) {
+      console.error('Error loading month data:', error);
+    }
+  };
+
+  const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
+  
+  // Gerar dados dinâmicos baseados nos cálculos
+  const generateDynamicData = () => {
+    if (!monthlyRevenue || !calculatedTaxes || !companySettings) {
+      return {
+        faturamentoDiscounts: [],
+        fechamentoDiscounts: [],
+        revenue: 'R$ 0,00',
+        proLabore: 'R$ 0,00',
+        inss: 'R$ 0,00',
+        das: 'R$ 0,00'
+      };
+    }
+
+    const revenue = monthlyRevenue.total_revenue;
+    const proLabore = calculatedTaxes.pro_labore_amount;
+    const inss = calculatedTaxes.inss_amount;
+    const das = calculatedTaxes.das_amount;
+
+    const formatCurrency = (value: number) => {
+      return `R$ ${value.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`;
+    };
+
+    const faturamentoDiscounts = [
+      {
+        id: '1',
+        title: 'Pró-Labore',
+        amount: formatCurrency(proLabore),
+        description: `${companySettings.pro_labore_percentage}% do faturamento`,
+        fontWeight: 'bold' as const,
+        type: 'expense' as const
+      },
+      {
+        id: '2',
+        title: 'DAS - SN',
+        amount: formatCurrency(das),
+        description: `${companySettings.das_percentage}% do faturamento`,
+        fontWeight: 'extrabold' as const,
+        type: 'expense' as const
+      },
+      {
+        id: '3',
+        title: 'INSS',
+        amount: formatCurrency(inss),
+        description: `${companySettings.inss_percentage}% do pró-labore`,
+        fontWeight: 'extrabold' as const,
+        type: 'expense' as const
+      }
+    ];
+
+    const fechamentoDiscounts = [
+      {
+        id: '1',
+        title: 'Pró-Labore',
+        amount: formatCurrency(proLabore),
+        description: `${companySettings.pro_labore_percentage}% do faturamento`,
+        fontWeight: 'bold' as const,
+        type: 'expense' as const
+      },
+      {
+        id: '2',
+        title: 'DAS - SN',
+        amount: formatCurrency(das),
+        description: `${companySettings.das_percentage}% do faturamento`,
+        fontWeight: 'extrabold' as const,
+        type: 'expense' as const
+      },
+      {
+        id: '3',
+        title: 'INSS',
+        amount: formatCurrency(inss),
+        description: `${companySettings.inss_percentage}% do pró-labore`,
+        fontWeight: 'extrabold' as const,
+        type: 'expense' as const
+      }
+    ];
+
+    return {
+      faturamentoDiscounts,
+      fechamentoDiscounts,
+      revenue: formatCurrency(revenue),
+      proLabore: formatCurrency(proLabore),
+      inss: formatCurrency(inss),
+      das: formatCurrency(das)
+    };
+  };
+
+  const dynamicData = generateDynamicData();
+
+  // Converter transações do banco para formato do componente
+  const formatTransactionsForComponent = (dbTransactions: any[]) => {
+    return dbTransactions.map(transaction => ({
+      id: transaction.id,
+      title: transaction.title,
+      description: transaction.description || '',
+      amount: `R$ ${transaction.amount.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`,
+      type: transaction.type,
+      status: transaction.status,
+      date: '25 de Jun 2025' // Simplificado por enquanto
+    }));
+  };
+
+  const incomeTransactions = formatTransactionsForComponent(
+    transactions.filter(t => t.type === 'income')
+  );
+  
+  const expenseTransactions = formatTransactionsForComponent(
+    transactions.filter(t => t.type === 'expense')
+  );
 
   const handleMonthChange = (monthIndex: number) => {
     setCurrentMonth(monthIndex);
   };
-
   const handleTabChange = (tab: 'faturamento' | 'fechamento') => {
     setActiveTab(tab);
   };
-
   const handleBottomNavChange = (tab: string) => {
     setBottomNavTab(tab);
   };
-
   const handleAddTransaction = () => {
-    setIsCreateModalOpen(true);
+    console.log('Add transaction clicked');
   };
-
-  const handleCreateTransaction = async (newTransaction: any) => {
-    await createTransaction(currentMonth + 1, currentYear, newTransaction);
-    setIsCreateModalOpen(false);
-  };
-
-  const handleDeleteTransaction = async (transactionId: string) => {
-    await deleteTransaction(transactionId);
-    setIsEditModalOpen(false);
-  };
-
   const handleDiscountClick = (discount: any) => {
-    setSelectedTransaction(discount);
+    // Convert discount to transaction format for the modal
+    const transactionFromDiscount = {
+      id: discount.id,
+      title: discount.title,
+      amount: discount.amount,
+      description: discount.description,
+      type: discount.type
+    };
+    setSelectedTransaction(transactionFromDiscount);
     setIsEditModalOpen(true);
+    console.log('Discount clicked:', discount);
   };
-
   const handleTransactionClick = (transaction: any) => {
     setSelectedTransaction(transaction);
     setIsEditModalOpen(true);
+    console.log('Transaction clicked:', transaction);
   };
-
-  const handleSaveTransaction = async (updatedTransaction: any) => {
-    if (updatedTransaction.id) {
-      await updateTransaction(updatedTransaction.id, updatedTransaction);
-    } else {
-      await createTransaction(currentMonth + 1, currentYear, updatedTransaction);
-    }
+  const handleSaveTransaction = (updatedTransaction: any) => {
+    console.log('Transaction saved:', updatedTransaction);
     setIsEditModalOpen(false);
   };
 
   const handleStatusChange = async (transactionId: string, newStatus: 'pending' | 'completed') => {
-    await updateTransaction(transactionId, { status: newStatus });
+    console.log('Status changed:', transactionId, newStatus);
+    
+    try {
+      await updateTransaction(transactionId, { status: newStatus });
+      // Recarregar transações
+      const year = 2025;
+      const month = currentMonth + 1;
+      await fetchTransactions(month, year);
+    } catch (error) {
+      console.error('Error updating transaction status:', error);
+    }
   };
 
   const openCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(true);
   const closeCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(false);
-  
   const handleSelectCompany = (companyId: string) => {
-    const company = companies.find(c => c.id === companyId);
-    if (company && selectedCompany) {
-      // Company switching logic would go here
-    }
+    console.log('Company selected:', companyId);
   };
 
   const handleRefresh = async () => {
-    if (selectedCompany) {
-      await fetchMonthlyData(currentMonth + 1, currentYear);
-    }
+    console.log('Refreshing data...');
+    await loadMonthData();
+    console.log('Data refreshed!');
   };
 
   const {
@@ -153,98 +332,75 @@ function Index() {
     threshold: 80
   });
 
-  // Calculate dynamic data based on database
-  const totalRevenue = monthlyRevenue?.total_revenue || 0;
-  const incomeTransactions = transactions.filter(t => t.type === 'income');
-  const expenseTransactions = transactions.filter(t => t.type === 'expense');
-  
-  const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
-  const currentBalance = totalRevenue - totalExpenses;
-
-  // Generate discount cards based on settings and calculations
-  const generateDiscounts = () => {
-    if (!companySettings || !monthlyRevenue) return [];
-
-    const proLabore = (totalRevenue * companySettings.pro_labore_percentage) / 100;
-    const das = (totalRevenue * companySettings.das_percentage) / 100;
-    const inss = (proLabore * companySettings.inss_percentage) / 100;
-
-    if (activeTab === 'faturamento') {
-      return [
-        {
-          id: '1',
-          title: 'Pró-Labore',
-          amount: `R$ ${proLabore.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.pro_labore_percentage}% do faturamento`,
-          fontWeight: 'bold' as const,
-          type: 'expense' as const
-        },
-        {
-          id: '2',
-          title: 'DAS - SN',
-          amount: `R$ ${das.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.das_percentage}% do faturamento`,
-          fontWeight: 'extrabold' as const,
-          type: 'expense' as const
-        },
-        {
-          id: '3',
-          title: 'INSS',
-          amount: `R$ ${inss.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.inss_percentage}% do pró-labore`,
-          fontWeight: 'extrabold' as const,
-          type: 'expense' as const
-        }
-      ];
-    } else {
-      const profitDistribution = Math.max(0, currentBalance - companySettings.accounting_fee);
-      
-      return [
-        {
-          id: '1',
-          title: 'Pró-Labore',
-          amount: `R$ ${proLabore.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.pro_labore_percentage}% do faturamento`,
-          fontWeight: 'bold' as const,
-          type: 'expense' as const
-        },
-        {
-          id: '4',
-          title: 'Retiradas',
-          amount: `R$ ${profitDistribution.toFixed(2).replace('.', ',')}`,
-          description: 'Distr. de lucros',
-          fontWeight: 'extrabold' as const,
-          type: 'expense' as const
-        },
-        {
-          id: '2',
-          title: 'DAS - SN',
-          amount: `R$ ${das.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.das_percentage}% do faturamento`,
-          fontWeight: 'extrabold' as const,
-          type: 'expense' as const
-        },
-        {
-          id: '3',
-          title: 'INSS',
-          amount: `R$ ${inss.toFixed(2).replace('.', ',')}`,
-          description: `${companySettings.inss_percentage}% do pró-labore`,
-          fontWeight: 'extrabold' as const,
-          type: 'expense' as const
-        }
-      ];
-    }
-  };
-
-  const currentDiscounts = generateDiscounts();
-  const revenueSummaryTitle = activeTab === 'faturamento' 
-    ? `R$ ${totalRevenue.toFixed(2).replace('.', ',')}`
-    : `R$ ${currentBalance.toFixed(2).replace('.', ',')}`;
-  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
-
-  if (authLoading || companiesLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Carregando...</div>;
+  if (authLoading || (user && companiesLoading)) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white">Carregando...</div>
+      </div>
+    );
   }
+
+  if (!user) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-2xl mb-4">Gestão Fiscal</h1>
+          <p className="mb-4">Faça login para acessar o sistema</p>
+          <Button onClick={() => setAuthModalOpen(true)}>
+            Fazer Login
+          </Button>
+        </div>
+        <AuthModal 
+          isOpen={authModalOpen} 
+          onClose={() => setAuthModalOpen(false)} 
+        />
+      </div>
+    );
+  }
+
+  if (companies.length === 0) {
+    return (
+      <div className="w-full max-w-[100vw] bg-black min-h-screen flex items-center justify-center">
+        <div className="text-white text-center">
+          <h1 className="text-2xl mb-4">Bem-vindo!</h1>
+          <p className="mb-4">Configure sua primeira empresa para começar</p>
+          <Button onClick={() => setCompanySetupModalOpen(true)}>
+            Configurar Empresa
+          </Button>
+          <div className="mt-4">
+            <Button variant="outline" onClick={signOut}>
+              Sair
+            </Button>
+          </div>
+        </div>
+        <CompanySetupModal 
+          isOpen={companySetupModalOpen} 
+          onClose={() => setCompanySetupModalOpen(false)} 
+        />
+      </div>
+    );
+  }
+
+  // Definir dados baseados na aba ativa
+  const currentDiscounts = activeTab === 'faturamento' ? dynamicData.faturamentoDiscounts : [];
+  const currentIncomeTransactions = incomeTransactions;
+  const currentExpenseTransactions = expenseTransactions;
+  
+  const totalIncome = incomeTransactions.reduce((sum, t) => {
+    const amount = parseFloat(t.amount.replace('R$ ', '').replace('.', '').replace(',', '.'));
+    return sum + amount;
+  }, 0);
+  
+  const totalExpense = expenseTransactions.reduce((sum, t) => {
+    const amount = parseFloat(t.amount.replace('R$ ', '').replace('.', '').replace(',', '.'));
+    return sum + amount;
+  }, 0);
+  
+  const balance = totalIncome - totalExpense;
+  
+  const revenueSummaryTitle = activeTab === 'faturamento' ? dynamicData.revenue : `R$ ${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
+  const discountGridTitle = 'Principais descontos';
 
   return (
     <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
@@ -252,11 +408,15 @@ function Index() {
     }}>
       <PullToRefreshIndicator isVisible={shouldShowIndicator} isRefreshing={isRefreshing} pullDistance={pullDistance} threshold={80} />
       
-      <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
+      <Header 
+        title="Gestão fiscal" 
+        onBackClick={() => console.log('Back clicked')} 
+        onSettingsClick={() => setAuthModalOpen(true)} 
+      />
       
       <CompanyInfo 
-        companyName={selectedCompany?.name || "Selecione uma empresa"} 
-        onRefreshClick={openCompanySwitcherModal} 
+        companyName={currentCompany?.name || "Carregando..."} 
+        onRefreshClick={() => setIsCompanySwitcherModalOpen(true)} 
       />
       
       <main className="w-full h-[1400px] relative">
@@ -277,12 +437,12 @@ function Index() {
         </div>
         
         <div className="absolute w-full flex flex-col items-center gap-3 px-4 left-0 top-6 sm:px-[21px]">
-          <MonthNavigation months={months} currentMonth={currentMonth} onMonthChange={handleMonthChange} />
+          <MonthNavigation months={months} currentMonth={currentMonth} onMonthChange={setCurrentMonth} />
           <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
         </div>
         
         <div className="absolute w-full flex flex-col items-start gap-8 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
-          <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
           
           <RevenueSummary 
             totalRevenue={revenueSummaryTitle} 
@@ -293,81 +453,48 @@ function Index() {
           
           <div className="pb-8 w-full">
             <DiscountGrid 
-              title="Principais descontos" 
+              title={discountGridTitle} 
               discounts={currentDiscounts} 
-              onDiscountClick={handleDiscountClick}
+              onDiscountClick={(discount) => {
+                setSelectedTransaction(discount);
+                setIsEditModalOpen(true);
+              }}
             />
           </div>
         </div>
       </main>
       
       <TransactionSheet 
-        month={`${months[currentMonth]}`}
-        incomeTotal={`R$ ${incomeTransactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2).replace('.', ',')}`}
-        expenseTotal={`R$ ${totalExpenses.toFixed(2).replace('.', ',')}`}
-        incomeTransactions={incomeTransactions.map(t => ({
-          id: t.id,
-          title: t.title,
-          description: t.description || '',
-          amount: `R$ ${t.amount.toFixed(2).replace('.', ',')}`,
-          type: t.type
-        }))}
-        expenseTransactions={expenseTransactions.map(t => ({
-          id: t.id,
-          title: t.title,
-          description: t.description || '',
-          amount: `R$ ${t.amount.toFixed(2).replace('.', ',')}`,
-          type: t.type,
-          status: t.status,
-          date: t.due_date || new Date().toISOString().split('T')[0]
-        }))}
-        entryTotal={`R$ ${totalRevenue.toFixed(2).replace('.', ',')}`}
-        exitTotal={`R$ ${totalExpenses.toFixed(2).replace('.', ',')}`}
-        balance={`R$ ${currentBalance.toFixed(2).replace('.', ',')}`}
+        month="Maio 2025" 
+        incomeTotal={`R$ ${totalIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        expenseTotal={`R$ ${totalExpense.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        incomeTransactions={currentIncomeTransactions} 
+        expenseTransactions={currentExpenseTransactions} 
+        entryTotal={`R$ ${totalIncome.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        exitTotal={`R$ ${totalExpense.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        balance={`R$ ${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         onAddTransaction={handleAddTransaction} 
         onTransactionClick={handleTransactionClick}
         showStatus={activeTab === 'fechamento'}
         isClosingTab={activeTab === 'fechamento'}
-        initialBalance="R$ 0,00"
+        initialBalance="R$ 5.000,00"
         onStatusChange={handleStatusChange}
       />
       
       <BottomNavigation activeTab={bottomNavTab} onTabChange={handleBottomNavChange} />
 
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
-
-      <CompanySetupModal
-        isOpen={isCompanySetupModalOpen}
-        onClose={() => setIsCompanySetupModalOpen(false)}
-      />
-
       <TransactionEditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        transaction={selectedTransaction ? {
-          ...selectedTransaction,
-          amount: typeof selectedTransaction.amount === 'string' 
-            ? parseFloat(selectedTransaction.amount.replace(/[R$\s.]/g, '').replace(',', '.'))
-            : selectedTransaction.amount
-        } : null}
+        transaction={selectedTransaction}
         onSave={handleSaveTransaction}
-        onDelete={handleDeleteTransaction}
-      />
-
-      <TransactionCreateModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSave={handleCreateTransaction}
       />
 
       <CompanySwitcherModal
         isOpen={isCompanySwitcherModalOpen}
-        onClose={closeCompanySwitcherModal}
-        onSelectCompany={handleSelectCompany}
-        onRegisterNewCompany={() => setIsCompanySetupModalOpen(true)}
+        onClose={() => setIsCompanySwitcherModalOpen(false)}
+        onSelectCompany={() => console.log('Company selected')}
+        onRegisterNewCompany={() => setCompanySetupModalOpen(true)}
       />
     </div>
   );

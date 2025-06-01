@@ -1,57 +1,75 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [isSignUp, setIsSignUp] = useState(false);
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const { signIn, signUp } = useAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
-      const result = isSignUp 
-        ? await signUp(email, password)
-        : await signIn(email, password);
-
-      if (result.error) {
-        setError(result.error);
+      if (isLogin) {
+        const { error } = await signIn(email, password);
+        if (error) throw error;
+        toast({ title: 'Login realizado com sucesso!' });
+        onClose();
       } else {
+        const { error } = await signUp(email, password, fullName);
+        if (error) throw error;
+        toast({ title: 'Conta criada com sucesso! Verifique seu email.' });
         onClose();
       }
-    } catch (err) {
-      setError('Erro inesperado');
+    } catch (error: any) {
+      toast({
+        title: 'Erro',
+        description: error.message,
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {isSignUp ? 'Criar conta' : 'Entrar'}
-          </DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-4">
+          {isLogin ? 'Entrar' : 'Criar Conta'}
+        </h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+          {!isLogin && (
+            <div>
+              <Label htmlFor="fullName">Nome Completo</Label>
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required={!isLogin}
+              />
+            </div>
+          )}
+          
+          <div>
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -62,7 +80,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
           
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="password">Senha</Label>
             <Input
               id="password"
@@ -70,27 +88,33 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </div>
-
-          {error && (
-            <div className="text-red-500 text-sm">{error}</div>
-          )}
-
+          
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Carregando...' : (isSignUp ? 'Criar conta' : 'Entrar')}
-          </Button>
-
-          <Button
-            type="button"
-            variant="ghost"
-            className="w-full"
-            onClick={() => setIsSignUp(!isSignUp)}
-          >
-            {isSignUp ? 'Já tem conta? Entre aqui' : 'Não tem conta? Crie aqui'}
+            {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
           </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+        
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-blue-600 hover:underline"
+          >
+            {isLogin ? 'Não tem conta? Criar conta' : 'Já tem conta? Entrar'}
+          </button>
+        </div>
+        
+        <Button
+          variant="outline"
+          onClick={onClose}
+          className="w-full mt-4"
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
   );
-}
+};
