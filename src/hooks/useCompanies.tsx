@@ -29,6 +29,12 @@ export function useCompanies() {
   useEffect(() => {
     if (user) {
       fetchCompanies();
+    } else {
+      // Se não há usuário, definir loading como false
+      setLoading(false);
+      setCompanies([]);
+      setSelectedCompany(null);
+      setCompanySettings(null);
     }
   }, [user]);
 
