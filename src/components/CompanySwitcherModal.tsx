@@ -1,12 +1,19 @@
-
 import { Button } from '@/components/ui/button';
 import React, { useState, useEffect } from 'react';
 import { Building, Edit } from 'lucide-react';
+import { CompanyEditModal } from './CompanyEditModal';
 
 interface Company {
   id: string;
   name: string;
   icon?: React.ReactNode;
+}
+
+interface CompanyData {
+  name: string;
+  taxRate: number;
+  proLaboreRate: number;
+  inssRate: number;
 }
 
 // Placeholder company data
@@ -68,6 +75,8 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>('1');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingCompanyId, setEditingCompanyId] = useState<string | null>(null);
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
@@ -108,89 +117,112 @@ export const CompanySwitcherModal: React.FC<CompanySwitcherModalProps> = ({
 
   const handleEditCompany = (companyId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    if (onEditCompany) {
-      onEditCompany(companyId);
-    }
+    setEditingCompanyId(companyId);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveCompanyData = (companyData: CompanyData) => {
+    console.log('Company data saved:', companyData, 'for company ID:', editingCompanyId);
+    setIsEditModalOpen(false);
+    setEditingCompanyId(null);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div 
-      className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
-        isClosing ? 'opacity-0' : 'opacity-100'
-      }`}
-      onClick={handleClose}
-    >
-      <div
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[61] transition-all duration-300 ease-out shadow-xl max-w-[500px] mx-auto ${
-          isClosing ? 'translate-y-full' : 'translate-y-0'
-        } ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`}
-        onClick={e => e.stopPropagation()}
+    <>
+      <div 
+        className={`fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 overflow-hidden ${
+          isClosing ? 'opacity-0' : 'opacity-100'
+        }`}
+        onClick={handleClose}
       >
-        {/* Handle bar */}
-        <div className="py-3 flex justify-center">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
-        </div>
+        <div
+          className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[61] transition-all duration-300 ease-out shadow-xl max-w-[500px] mx-auto ${
+            isClosing ? 'translate-y-full' : 'translate-y-0'
+          } ${!isClosing && isOpen ? 'animate-slide-in-bottom' : ''}`}
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Handle bar */}
+          <div className="py-3 flex justify-center">
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+          </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <h2 className="text-xl font-semibold text-gray-800">Trocar empresa</h2>
-          <button 
-            onClick={onRegisterNewCompany}
-            className="p-0 hover:opacity-80 transition-opacity"
-          >
-            <AddCompanyIcon />
-          </button>
-        </div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3">
+            <h2 className="text-xl font-semibold text-gray-800">Trocar empresa</h2>
+            <button 
+              onClick={onRegisterNewCompany}
+              className="p-0 hover:opacity-80 transition-opacity"
+            >
+              <AddCompanyIcon />
+            </button>
+          </div>
 
-        {/* Company List */}
-        <div className="px-5 py-4">
-          {mockCompanies.map((company, index) => (
-            <div key={company.id}>
-              <div
-                className="company-item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors"
-                onClick={() => handleCompanySelect(company.id)}
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="custom-radio w-6 h-6 flex items-center justify-center cursor-pointer">
-                    {selectedCompanyId === company.id ? (
-                      <SelectedRadioIcon uniqueId={company.id} />
-                    ) : (
-                      <div className="w-[22px] h-[22px] border-2 border-gray-400 rounded-full bg-white"></div>
-                    )}
-                  </div>
-                  <Building className="text-gray-600" size={24} />
-                  <span className="text-gray-700 font-medium">{company.name}</span>
-                </div>
-                <button 
-                  className="text-gray-500 hover:text-gray-700 transition-colors p-1"
-                  onClick={(e) => handleEditCompany(company.id, e)}
+          {/* Company List */}
+          <div className="px-5 py-4">
+            {mockCompanies.map((company, index) => (
+              <div key={company.id}>
+                <div
+                  className="company-item flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors"
+                  onClick={() => handleCompanySelect(company.id)}
                 >
-                  <Edit size={20} />
-                </button>
-              </div>
-              
-              {/* Separator (except for last item) */}
-              {index < mockCompanies.length - 1 && (
-                <div className="mt-4">
-                  <div className="h-px bg-gray-200"></div>
+                  <div className="flex items-center space-x-4">
+                    <div className="custom-radio w-6 h-6 flex items-center justify-center cursor-pointer">
+                      {selectedCompanyId === company.id ? (
+                        <SelectedRadioIcon uniqueId={company.id} />
+                      ) : (
+                        <div className="w-[22px] h-[22px] border-2 border-gray-400 rounded-full bg-white"></div>
+                      )}
+                    </div>
+                    <Building className="text-gray-600" size={24} />
+                    <span className="text-gray-700 font-medium">{company.name}</span>
+                  </div>
+                  <button 
+                    className="text-gray-500 hover:text-gray-700 transition-colors p-1"
+                    onClick={(e) => handleEditCompany(company.id, e)}
+                  >
+                    <Edit size={20} />
+                  </button>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+                
+                {/* Separator (except for last item) */}
+                {index < mockCompanies.length - 1 && (
+                  <div className="mt-4">
+                    <div className="h-px bg-gray-200"></div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
 
-        {/* Apply Button */}
-        <div className="px-5 py-6">
-          <button
-            className="w-full bg-black text-white font-semibold py-3.5 rounded-xl transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 hover:bg-gray-900"
-            onClick={handleApplySelection}
-          >
-            Aplicar
-          </button>
+          {/* Apply Button */}
+          <div className="px-5 py-6">
+            <button
+              className="w-full bg-black text-white font-semibold py-3.5 rounded-xl transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 hover:bg-gray-900"
+              onClick={handleApplySelection}
+            >
+              Aplicar
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Company Edit Modal */}
+      <CompanyEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingCompanyId(null);
+        }}
+        onSave={handleSaveCompanyData}
+        companyData={{
+          name: mockCompanies.find(c => c.id === editingCompanyId)?.name || '',
+          taxRate: 6,
+          proLaboreRate: 28,
+          inssRate: 11
+        }}
+      />
+    </>
   );
 };
