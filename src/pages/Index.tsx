@@ -117,45 +117,50 @@ function Index() {
     type: 'expense' as const
   }];
 
-  // Dados para aba de fechamento com status e meses de referência
-  const fechamentoIncomeTransactions = [{
+  // State for fechamento transactions with status
+  const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState([{
     id: '1',
     title: 'Salário',
     description: 'Maio 2025',
     amount: 'R$ 10.500,00',
     type: 'income' as const,
-    status: 'completed' as const
-  }];
+    status: 'completed' as const,
+    date: '25 de Jun 2025'
+  }]);
 
-  const fechamentoExpenseTransactions = [{
-    id: '1',
+  const [fechamentoExpenseTransactions, setFechamentoExpenseTransactions] = useState([{
+    id: '2',
     title: 'Pró-labore',
     description: 'Maio 2025',
     amount: 'R$ 2.950,50',
     type: 'expense' as const,
-    status: 'completed' as const
+    status: 'completed' as const,
+    date: '25 de Jun 2025'
   }, {
-    id: '2',
+    id: '3',
     title: 'DAS - Simples nacional',
     description: 'referente a Abril 2025',
     amount: 'R$ 630,00',
     type: 'expense' as const,
-    status: 'pending' as const
+    status: 'pending' as const,
+    date: '25 de Jun 2025'
   }, {
-    id: '3',
+    id: '4',
     title: 'INSS',
     description: 'referente a Abril 2025',
     amount: 'R$ 324,55',
     type: 'expense' as const,
-    status: 'pending' as const
+    status: 'pending' as const,
+    date: '25 de Jun 2025'
   }, {
-    id: '4',
+    id: '5',
     title: 'Despesas',
     description: 'referente a Abril 2025',
     amount: 'R$ 112,13',
     type: 'expense' as const,
-    status: 'completed' as const
-  }];
+    status: 'completed' as const,
+    date: '25 de Jun 2025'
+  }]);
 
   const handleMonthChange = (monthIndex: number) => {
     setCurrentMonth(monthIndex);
@@ -192,6 +197,28 @@ function Index() {
     setIsEditModalOpen(false);
   };
 
+  const handleStatusChange = (transactionId: string, newStatus: 'pending' | 'completed') => {
+    console.log('Status changed:', transactionId, newStatus);
+    
+    // Update income transactions
+    setFechamentoIncomeTransactions(prev => 
+      prev.map(transaction => 
+        transaction.id === transactionId 
+          ? { ...transaction, status: newStatus }
+          : transaction
+      )
+    );
+    
+    // Update expense transactions
+    setFechamentoExpenseTransactions(prev => 
+      prev.map(transaction => 
+        transaction.id === transactionId 
+          ? { ...transaction, status: newStatus }
+          : transaction
+      )
+    );
+  };
+
   const openCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(true);
   const closeCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(false);
   const handleSelectCompany = (companyId: string) => {
@@ -218,7 +245,8 @@ function Index() {
   const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
   const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
   const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
-  const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Desconto do mês';
+  const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo';
+  const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Principais descontos';
 
   return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
     paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
@@ -254,7 +282,12 @@ function Index() {
         <div className="absolute w-full flex flex-col items-start gap-8 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
           <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
           
-          <RevenueSummary totalRevenue={revenueSummaryTitle} percentageChange={0} comparisonText="em relação ao mês anterior" />
+          <RevenueSummary 
+            totalRevenue={revenueSummaryTitle} 
+            percentageChange={0} 
+            comparisonText="em relação ao mês anterior"
+            label={revenueSummaryLabel}
+          />
           
           <div className="pb-8 w-full">
             <DiscountGrid 
@@ -278,6 +311,9 @@ function Index() {
         onAddTransaction={handleAddTransaction} 
         onTransactionClick={handleTransactionClick}
         showStatus={activeTab === 'fechamento'}
+        isClosingTab={activeTab === 'fechamento'}
+        initialBalance="R$ 5.000,00"
+        onStatusChange={handleStatusChange}
       />
       
       <BottomNavigation activeTab={bottomNavTab} onTabChange={handleBottomNavChange} />

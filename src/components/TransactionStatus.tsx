@@ -4,15 +4,20 @@ import React from 'react';
 interface TransactionStatusProps {
   status: 'pending' | 'completed';
   className?: string;
+  onClick?: () => void;
 }
 
 export const TransactionStatus: React.FC<TransactionStatusProps> = ({
   status,
-  className = "w-6 h-6"
+  className = "w-6 h-6",
+  onClick
 }) => {
   if (status === 'completed') {
     return (
-      <div className={`${className} flex items-center justify-center`}>
+      <button 
+        className={`${className} flex items-center justify-center ${onClick ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
+        onClick={onClick}
+      >
         <div className="w-full h-full rounded-full bg-gradient-to-r from-[#78B60F] to-[#6D96E4] flex items-center justify-center">
           <svg
             className="w-3 h-3 text-white"
@@ -26,12 +31,15 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
             />
           </svg>
         </div>
-      </div>
+      </button>
     );
   }
 
   return (
-    <div className={`${className} flex items-center justify-center`}>
+    <button 
+      className={`${className} flex items-center justify-center ${onClick ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
+      onClick={onClick}
+    >
       <div className="w-full h-full rounded-full bg-gradient-to-r from-[#FF7A00] to-[#7637EA] flex items-center justify-center">
         <svg
           className="w-3 h-3 text-white"
@@ -45,6 +53,6 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
           />
         </svg>
       </div>
-    </div>
+    </button>
   );
 };

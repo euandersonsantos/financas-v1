@@ -11,6 +11,7 @@ interface TransactionItemProps {
   onClick?: () => void;
   showStatus?: boolean;
   status?: 'pending' | 'completed';
+  onStatusChange?: (newStatus: 'pending' | 'completed') => void;
 }
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -20,7 +21,8 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   type,
   onClick,
   showStatus = false,
-  status = 'pending'
+  status = 'pending',
+  onStatusChange
 }) => {
   const gradientClass = type === 'income' 
     ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
@@ -31,6 +33,13 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
     ? amount.replace('R$', '+')
     : amount.replace('R$', '-');
 
+  const handleStatusClick = () => {
+    if (onStatusChange) {
+      const newStatus = status === 'completed' ? 'pending' : 'completed';
+      onStatusChange(newStatus);
+    }
+  };
+
   return (
     <button
       onClick={onClick}
@@ -38,7 +47,11 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
     >
       <div className="flex items-center gap-4 flex-1">
         {showStatus ? (
-          <TransactionStatus status={status} className="w-6 h-6 flex-shrink-0" />
+          <TransactionStatus 
+            status={status} 
+            className="w-6 h-6 flex-shrink-0" 
+            onClick={onStatusChange ? handleStatusClick : undefined}
+          />
         ) : (
           <DocumentIcon className="w-6 h-6 flex-shrink-0" />
         )}
