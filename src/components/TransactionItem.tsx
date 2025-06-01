@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { DocumentIcon, ChevronRightIcon } from './icons';
+import { TransactionStatus } from './TransactionStatus';
 
 interface TransactionItemProps {
   title: string;
@@ -8,6 +9,8 @@ interface TransactionItemProps {
   amount: string;
   type: 'income' | 'expense';
   onClick?: () => void;
+  showStatus?: boolean;
+  status?: 'pending' | 'completed';
 }
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
@@ -15,7 +18,9 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
   description,
   amount,
   type,
-  onClick
+  onClick,
+  showStatus = false,
+  status = 'pending'
 }) => {
   const gradientClass = type === 'income' 
     ? 'bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent'
@@ -32,7 +37,11 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       className="flex justify-between items-center w-full text-left hover:bg-gray-50 transition-colors"
     >
       <div className="flex items-center gap-4 flex-1">
-        <DocumentIcon className="w-6 h-6 flex-shrink-0" />
+        {showStatus ? (
+          <TransactionStatus status={status} className="w-6 h-6 flex-shrink-0" />
+        ) : (
+          <DocumentIcon className="w-6 h-6 flex-shrink-0" />
+        )}
         <div className="flex flex-col items-start">
           <h3 className="text-[#43464D] font-bold text-lg tracking-[0.16px] max-sm:text-base">
             {title}

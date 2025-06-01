@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TransactionItem } from './TransactionItem';
 import { PlusIcon } from './icons';
@@ -8,6 +9,7 @@ interface Transaction {
   description: string;
   amount: string;
   type: 'income' | 'expense';
+  status?: 'pending' | 'completed';
 }
 
 interface TransactionSheetProps {
@@ -21,6 +23,7 @@ interface TransactionSheetProps {
   balance: string;
   onAddTransaction?: () => void;
   onTransactionClick?: (transaction: Transaction) => void;
+  showStatus?: boolean;
 }
 
 export const TransactionSheet: React.FC<TransactionSheetProps> = ({
@@ -33,7 +36,8 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   exitTotal,
   balance,
   onAddTransaction,
-  onTransactionClick
+  onTransactionClick,
+  showStatus = false
 }) => {
   const handleTransactionClick = (transaction: Transaction) => {
     onTransactionClick?.(transaction);
@@ -82,7 +86,9 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 description={transaction.description} 
                 amount={transaction.amount} 
                 type={transaction.type} 
-                onClick={() => handleTransactionClick(transaction)} 
+                onClick={() => handleTransactionClick(transaction)}
+                showStatus={showStatus}
+                status={transaction.status}
               />
             ))}
           </div>
@@ -112,7 +118,9 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 description={transaction.description} 
                 amount={transaction.amount} 
                 type={transaction.type} 
-                onClick={() => handleTransactionClick(transaction)} 
+                onClick={() => handleTransactionClick(transaction)}
+                showStatus={showStatus}
+                status={transaction.status}
               />
             ))}
           </div>

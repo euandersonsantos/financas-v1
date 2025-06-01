@@ -20,7 +20,9 @@ function Index() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
-  const discounts = [{
+  
+  // Dados para aba de faturamento
+  const faturamentoDiscounts = [{
     id: '1',
     title: 'Pró-Labore',
     amount: 'R$ 2.950,50',
@@ -49,14 +51,47 @@ function Index() {
     fontWeight: 'extrabold' as const,
     type: 'expense' as const
   }];
-  const incomeTransactions = [{
+
+  // Dados para aba de fechamento (mesmo valores mas descrições diferentes)
+  const fechamentoDiscounts = [{
+    id: '1',
+    title: 'Pró-Labore',
+    amount: 'R$ 2.950,50',
+    description: '100% do faturamento',
+    fontWeight: 'bold' as const,
+    type: 'expense' as const
+  }, {
+    id: '2',
+    title: 'DAS - SN',
+    amount: 'R$ 630,00',
+    description: '6% do faturamento',
+    fontWeight: 'extrabold' as const,
+    type: 'expense' as const
+  }, {
+    id: '3',
+    title: 'INSS',
+    amount: 'R$ 324,55',
+    description: '11% do pró-labore',
+    fontWeight: 'extrabold' as const,
+    type: 'expense' as const
+  }, {
+    id: '4',
+    title: 'Despesas',
+    amount: 'R$ 112,13',
+    description: 'Outras despesas',
+    fontWeight: 'extrabold' as const,
+    type: 'expense' as const
+  }];
+
+  const faturamentoIncomeTransactions = [{
     id: '1',
     title: 'Salário',
     description: 'Sensorama Design',
     amount: 'R$ 10.500,00',
     type: 'income' as const
   }];
-  const expenseTransactions = [{
+
+  const faturamentoExpenseTransactions = [{
     id: '1',
     title: 'Pró-labore',
     description: '100% do faturamento',
@@ -81,6 +116,47 @@ function Index() {
     amount: 'R$ 112,13',
     type: 'expense' as const
   }];
+
+  // Dados para aba de fechamento com status e meses de referência
+  const fechamentoIncomeTransactions = [{
+    id: '1',
+    title: 'Salário',
+    description: 'Maio 2025',
+    amount: 'R$ 10.500,00',
+    type: 'income' as const,
+    status: 'completed' as const
+  }];
+
+  const fechamentoExpenseTransactions = [{
+    id: '1',
+    title: 'Pró-labore',
+    description: 'Maio 2025',
+    amount: 'R$ 2.950,50',
+    type: 'expense' as const,
+    status: 'completed' as const
+  }, {
+    id: '2',
+    title: 'DAS - Simples nacional',
+    description: 'referente a Abril 2025',
+    amount: 'R$ 630,00',
+    type: 'expense' as const,
+    status: 'pending' as const
+  }, {
+    id: '3',
+    title: 'INSS',
+    description: 'referente a Abril 2025',
+    amount: 'R$ 324,55',
+    type: 'expense' as const,
+    status: 'pending' as const
+  }, {
+    id: '4',
+    title: 'Despesas',
+    description: 'referente a Abril 2025',
+    amount: 'R$ 112,13',
+    type: 'expense' as const,
+    status: 'completed' as const
+  }];
+
   const handleMonthChange = (monthIndex: number) => {
     setCurrentMonth(monthIndex);
   };
@@ -136,6 +212,14 @@ function Index() {
     onRefresh: handleRefresh,
     threshold: 80
   });
+
+  // Definir dados baseados na aba ativa
+  const currentDiscounts = activeTab === 'faturamento' ? faturamentoDiscounts : fechamentoDiscounts;
+  const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
+  const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
+  const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
+  const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Desconto do mês';
+
   return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
     paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
   }}>
@@ -170,12 +254,12 @@ function Index() {
         <div className="absolute w-full flex flex-col items-start gap-8 px-4 left-0 top-[110px] sm:w-[360px] sm:left-[21px] sm:px-0">
           <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
           
-          <RevenueSummary totalRevenue="R$ 10.500,00" percentageChange={0} comparisonText="em relação ao mês anterior" />
+          <RevenueSummary totalRevenue={revenueSummaryTitle} percentageChange={0} comparisonText="em relação ao mês anterior" />
           
           <div className="pb-8 w-full">
             <DiscountGrid 
-              title="Principais descontos" 
-              discounts={discounts} 
+              title={discountGridTitle} 
+              discounts={currentDiscounts} 
               onDiscountClick={handleDiscountClick}
             />
           </div>
@@ -186,13 +270,14 @@ function Index() {
         month="Maio 2025" 
         incomeTotal="R$ 10,500,00" 
         expenseTotal="R$ 4.017,18" 
-        incomeTransactions={incomeTransactions} 
-        expenseTransactions={expenseTransactions} 
+        incomeTransactions={currentIncomeTransactions} 
+        expenseTransactions={currentExpenseTransactions} 
         entryTotal="R$ 10.500,00" 
         exitTotal="R$ 4.017,18" 
         balance="R$ 6.482,82" 
         onAddTransaction={handleAddTransaction} 
-        onTransactionClick={handleTransactionClick} 
+        onTransactionClick={handleTransactionClick}
+        showStatus={activeTab === 'fechamento'}
       />
       
       <BottomNavigation activeTab={bottomNavTab} onTabChange={handleBottomNavChange} />
