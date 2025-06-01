@@ -120,14 +120,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             {/* Saldo inicial com melhor exibição */}
             <div className="flex flex-col items-start gap-4 w-full">
               <div className="flex flex-col items-start gap-[5px] w-full">
-                <div className="flex justify-between items-center w-full">
-                  <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
-                    Saldo inicial
-                  </span>
-                  <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
-                    {initialBalance}
-                  </span>
-                </div>
+                
                 <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
               </div>
               
