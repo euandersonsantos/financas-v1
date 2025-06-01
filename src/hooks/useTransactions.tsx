@@ -2,15 +2,20 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useCompany } from './useCompany';
+import type { Database } from '@/integrations/supabase/types';
+
+type TransactionCategory = Database['public']['Enums']['transaction_category'];
+type TransactionStatus = Database['public']['Enums']['transaction_status'];
+type TransactionType = Database['public']['Enums']['transaction_type'];
 
 interface Transaction {
   id: string;
   title: string;
   description: string | null;
   amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  status: 'pending' | 'completed';
+  type: TransactionType;
+  category: TransactionCategory;
+  status: TransactionStatus;
   due_date: string | null;
   payment_date: string | null;
   month: number;
@@ -57,7 +62,7 @@ export const useTransactions = (month: number, year: number) => {
     fetchTransactions();
   }, [company, month, year]);
 
-  const updateTransactionStatus = async (transactionId: string, newStatus: 'pending' | 'completed') => {
+  const updateTransactionStatus = async (transactionId: string, newStatus: TransactionStatus) => {
     if (!company) return;
 
     try {
@@ -82,7 +87,7 @@ export const useTransactions = (month: number, year: number) => {
     }
   };
 
-  const updateTransaction = async (transactionId: string, updates: Partial<Transaction>) => {
+  const updateTransaction = async (transactionId: string, updates: { title?: string; description?: string; amount?: number }) => {
     if (!company) return;
 
     try {
