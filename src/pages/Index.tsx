@@ -66,6 +66,9 @@ function Index() {
     calculateAutomaticTransactions
   } = useTransactions(company?.id || '', currentMonthNumber, currentYear);
 
+  // Combined loading state
+  const isLoading = isCompanyLoading || isTransactionsLoading;
+
   // Format currency for display
   const formatCurrency = (amount: number) => {
     return `R$ ${amount.toLocaleString('pt-BR', {
@@ -279,7 +282,6 @@ function Index() {
       <CompanyInfo companyName={company.name} onRefreshClick={openCompanySwitcherModal} />
       
       <main className="w-full h-[1400px] relative">
-        {/* ... keep existing code (background SVG) */}
         <div className="w-full h-full relative">
           <svg className="w-full h-full absolute inset-0" viewBox="0 0 402 1400" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
             <path d="M0 28.3223C0 12.6804 10.7452 0 24 0H378C391.255 0 402 12.6804 402 28.3223V47.2038H0V28.3223Z" fill="url(#paint0_linear_background)" />
