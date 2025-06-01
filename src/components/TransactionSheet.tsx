@@ -100,7 +100,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                     Maio 2025
                   </p>
                 </div>
-                <span className="text-base font-extrabold tracking-[0.01em] max-sm:text-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent">
+                <span className="tracking-[0.01em] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-zinc-600 font-extrabold text-sm">
                   {initialBalance}
                 </span>
               </div>
