@@ -9,16 +9,272 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      calculated_taxes: {
+        Row: {
+          company_id: string
+          created_at: string
+          das_amount: number
+          id: string
+          inss_amount: number
+          payment_month: number
+          payment_year: number
+          pro_labore_amount: number
+          reference_month: number
+          reference_year: number
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          das_amount?: number
+          id?: string
+          inss_amount?: number
+          payment_month: number
+          payment_year: number
+          pro_labore_amount?: number
+          reference_month: number
+          reference_year: number
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          das_amount?: number
+          id?: string
+          inss_amount?: number
+          payment_month?: number
+          payment_year?: number
+          pro_labore_amount?: number
+          reference_month?: number
+          reference_year?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculated_taxes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      company_settings: {
+        Row: {
+          accounting_fee: number | null
+          company_id: string
+          created_at: string
+          das_percentage: number
+          id: string
+          inss_percentage: number
+          pro_labore_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          accounting_fee?: number | null
+          company_id: string
+          created_at?: string
+          das_percentage?: number
+          id?: string
+          inss_percentage?: number
+          pro_labore_percentage?: number
+          updated_at?: string
+        }
+        Update: {
+          accounting_fee?: number | null
+          company_id?: string
+          created_at?: string
+          das_percentage?: number
+          id?: string
+          inss_percentage?: number
+          pro_labore_percentage?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_settings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_revenue: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          month: number
+          total_revenue: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          month: number
+          total_revenue?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          month?: number
+          total_revenue?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_revenue_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          company_id: string
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          is_auto_generated: boolean | null
+          month: number
+          payment_date: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          title: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          amount: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          company_id: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_auto_generated?: boolean | null
+          month: number
+          payment_date?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          title: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          amount?: number
+          category?: Database["public"]["Enums"]["transaction_category"]
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          is_auto_generated?: boolean | null
+          month?: number
+          payment_date?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_automatic_transactions: {
+        Args: {
+          p_company_id: string
+          p_month: number
+          p_year: number
+          p_revenue?: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      transaction_category:
+        | "salary"
+        | "pro_labore"
+        | "profit_distribution"
+        | "das"
+        | "inss"
+        | "accounting"
+        | "other_expense"
+        | "other_income"
+      transaction_status: "pending" | "completed"
+      transaction_type: "income" | "expense"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +389,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      transaction_category: [
+        "salary",
+        "pro_labore",
+        "profit_distribution",
+        "das",
+        "inss",
+        "accounting",
+        "other_expense",
+        "other_income",
+      ],
+      transaction_status: ["pending", "completed"],
+      transaction_type: ["income", "expense"],
+    },
   },
 } as const

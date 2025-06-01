@@ -11,6 +11,9 @@ import { PullToRefreshIndicator } from "@/components/PullToRefreshIndicator";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { TransactionEditModal } from "@/components/TransactionEditModal";
 import { CompanySwitcherModal } from "@/components/CompanySwitcherModal";
+import { useAuth } from "@/hooks/useAuth";
+import { useCompany } from "@/hooks/useCompany";
+import { useTransactions } from "@/hooks/useTransactions";
 
 // Define transaction types
 interface IncomeTransactionWithStatus {
@@ -34,162 +37,32 @@ interface ExpenseTransactionWithStatus {
 }
 
 function Index() {
+  const { signOut } = useAuth();
+  const { company, loading: companyLoading } = useCompany();
   const [currentMonth, setCurrentMonth] = useState(6); // Começar em JUL 25
   const [activeTab, setActiveTab] = useState<'faturamento' | 'fechamento'>('faturamento');
   const [isCompanySwitcherModalOpen, setIsCompanySwitcherModalOpen] = useState(false);
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
   
-  // Dados para aba de faturamento
-  const faturamentoDiscounts = [{
-    id: '1',
-    title: 'Pró-Labore',
-    amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
-    fontWeight: 'bold' as const,
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - SN',
-    amount: 'R$ 630,00',
-    description: '6% do faturamento',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    amount: 'R$ 324,55',
-    description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Despesas',
-    amount: 'R$ 112,13',
-    description: 'Outras despesas',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }];
+  // Calcular mês e ano baseado no currentMonth
+  const monthNumber = (currentMonth % 12) + 1;
+  const year = currentMonth >= 12 ? 2026 : 2025;
+  
+  const {
+    incomeTransactions,
+    expenseTransactions,
+    faturamentoDiscounts,
+    fechamentoDiscounts,
+    loading: transactionsLoading,
+    updateTransactionStatus,
+    updateTransaction,
+  } = useTransactions(monthNumber, year);
 
-  // Dados para aba de fechamento - nova ordem e "Retiradas" no lugar de "Despesas"
-  const fechamentoDiscounts = [{
-    id: '1',
-    title: 'Pró-Labore',
-    amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
-    fontWeight: 'bold' as const,
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Retiradas',
-    amount: 'R$ 112,13',
-    description: 'Distr. de lucros',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - SN',
-    amount: 'R$ 630,00',
-    description: '6% do faturamento',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    amount: 'R$ 324,55',
-    description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
-  }];
-
-  const faturamentoIncomeTransactions = [{
-    id: '1',
-    title: 'Salário',
-    description: 'Sensorama Design',
-    amount: 'R$ 10.500,00',
-    type: 'income' as const
-  }];
-
-  const faturamentoExpenseTransactions = [{
-    id: '1',
-    title: 'Pró-labore',
-    description: '100% do faturamento',
-    amount: 'R$ 2.950,50',
-    type: 'expense' as const
-  }, {
-    id: '2',
-    title: 'DAS - Simples nacional',
-    description: '6% do faturamento',
-    amount: 'R$ 630,00',
-    type: 'expense' as const
-  }, {
-    id: '3',
-    title: 'INSS',
-    description: '11% do pro-labore',
-    amount: 'R$ 324,55',
-    type: 'expense' as const
-  }, {
-    id: '4',
-    title: 'Despesas',
-    description: 'Outras despesas',
-    amount: 'R$ 112,13',
-    type: 'expense' as const
-  }];
-
-  // State for fechamento transactions with status - agrupados por data
-  const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState<IncomeTransactionWithStatus[]>([{
-    id: '1',
-    title: 'Salário',
-    description: 'Maio 2025',
-    amount: 'R$ 10.500,00',
-    type: 'income',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }]);
-
-  const [fechamentoExpenseTransactions, setFechamentoExpenseTransactions] = useState<ExpenseTransactionWithStatus[]>([{
-    id: '2',
-    title: 'Pró-labore',
-    description: 'Maio 2025',
-    amount: 'R$ 2.950,50',
-    type: 'expense',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }, {
-    id: '6',
-    title: 'Distribuição de lucros',
-    description: 'Maio 2025',
-    amount: 'R$ 112,13',
-    type: 'expense',
-    status: 'completed',
-    date: '25 de Jun 2025'
-  }, {
-    id: '3',
-    title: 'DAS - Simples nacional',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 630,00',
-    type: 'expense',
-    status: 'pending',
-    date: '20 de Jun 2025'
-  }, {
-    id: '4',
-    title: 'INSS',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 324,55',
-    type: 'expense',
-    status: 'pending',
-    date: '20 de Jun 2025'
-  }, {
-    id: '5',
-    title: 'Despesas',
-    description: 'referente a Abril 2025',
-    amount: 'R$ 112,13',
-    type: 'expense',
-    status: 'completed',
-    date: '20 de Jun 2025'
-  }]);
+  const loading = companyLoading || transactionsLoading;
 
   const handleMonthChange = (monthIndex: number) => {
     setCurrentMonth(monthIndex);
@@ -204,7 +77,6 @@ function Index() {
     console.log('Add transaction clicked');
   };
   const handleDiscountClick = (discount: any) => {
-    // Convert discount to transaction format for the modal
     const transactionFromDiscount = {
       id: discount.id,
       title: discount.title,
@@ -214,38 +86,29 @@ function Index() {
     };
     setSelectedTransaction(transactionFromDiscount);
     setIsEditModalOpen(true);
-    console.log('Discount clicked:', discount);
   };
   const handleTransactionClick = (transaction: any) => {
     setSelectedTransaction(transaction);
     setIsEditModalOpen(true);
-    console.log('Transaction clicked:', transaction);
   };
-  const handleSaveTransaction = (updatedTransaction: any) => {
-    console.log('Transaction saved:', updatedTransaction);
+  const handleSaveTransaction = async (updatedTransaction: any) => {
+    if (!selectedTransaction) return;
+
+    // Converter valor formatado para número
+    const amountStr = updatedTransaction.amount.replace('R$ ', '').replace('.', '').replace(',', '.');
+    const amount = parseFloat(amountStr);
+
+    await updateTransaction(selectedTransaction.id, {
+      title: updatedTransaction.title,
+      description: updatedTransaction.description,
+      amount: amount,
+    });
+
     setIsEditModalOpen(false);
   };
 
-  const handleStatusChange = (transactionId: string, newStatus: 'pending' | 'completed') => {
-    console.log('Status changed:', transactionId, newStatus);
-    
-    // Update income transactions
-    setFechamentoIncomeTransactions(prev => 
-      prev.map(transaction => 
-        transaction.id === transactionId 
-          ? { ...transaction, status: newStatus }
-          : transaction
-      )
-    );
-    
-    // Update expense transactions
-    setFechamentoExpenseTransactions(prev => 
-      prev.map(transaction => 
-        transaction.id === transactionId 
-          ? { ...transaction, status: newStatus }
-          : transaction
-      )
-    );
+  const handleStatusChange = async (transactionId: string, newStatus: 'pending' | 'completed') => {
+    await updateTransactionStatus(transactionId, newStatus);
   };
 
   const openCompanySwitcherModal = () => setIsCompanySwitcherModalOpen(true);
@@ -255,7 +118,6 @@ function Index() {
   };
   const handleRefresh = async () => {
     console.log('Refreshing data...');
-    // Simular carregamento
     await new Promise(resolve => setTimeout(resolve, 1500));
     console.log('Data refreshed!');
   };
@@ -269,22 +131,56 @@ function Index() {
     threshold: 80
   });
 
+  // Calcular totais
+  const totalIncome = incomeTransactions.reduce((sum, t) => {
+    const amount = parseFloat(t.amount.replace('R$ ', '').replace('.', '').replace(',', '.'));
+    return sum + amount;
+  }, 0);
+
+  const totalExpense = expenseTransactions.reduce((sum, t) => {
+    const amount = parseFloat(t.amount.replace('R$ ', '').replace('.', '').replace(',', '.'));
+    return sum + amount;
+  }, 0);
+
+  const balance = totalIncome - totalExpense;
+
+  const formatCurrency = (value: number) => {
+    return `R$ ${value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
+  };
+
   // Definir dados baseados na aba ativa
   const currentDiscounts = activeTab === 'faturamento' ? faturamentoDiscounts : fechamentoDiscounts;
-  const currentIncomeTransactions = activeTab === 'faturamento' ? faturamentoIncomeTransactions : fechamentoIncomeTransactions;
-  const currentExpenseTransactions = activeTab === 'faturamento' ? faturamentoExpenseTransactions : fechamentoExpenseTransactions;
-  const revenueSummaryTitle = activeTab === 'faturamento' ? 'R$ 10.500,00' : 'R$ 6.482,82';
+  const currentIncomeTransactions = incomeTransactions;
+  const currentExpenseTransactions = expenseTransactions;
+  const revenueSummaryTitle = activeTab === 'faturamento' ? formatCurrency(totalIncome) : formatCurrency(balance);
   const revenueSummaryLabel = activeTab === 'faturamento' ? 'Total faturamento' : 'Saldo atual';
-  const discountGridTitle = activeTab === 'faturamento' ? 'Principais descontos' : 'Principais descontos';
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#7A3E69] via-[#303E74] via-[#72CE9F] via-[#EAA124] to-[#907EEF] flex items-center justify-center">
+        <div className="text-white text-lg">Carregando dados...</div>
+      </div>
+    );
+  }
 
   return <div ref={scrollableRef} className="w-full max-w-[100vw] bg-black min-h-screen relative mx-auto font-['Urbanist'] overflow-x-hidden overflow-y-auto" style={{
     paddingTop: 'calc(env(safe-area-inset-top, 0px) + 76px)'
   }}>
       <PullToRefreshIndicator isVisible={shouldShowIndicator} isRefreshing={isRefreshing} pullDistance={pullDistance} threshold={80} />
       
-      <Header title="Gestão fiscal" onBackClick={() => console.log('Back clicked')} onSettingsClick={() => console.log('Settings clicked')} />
+      <Header 
+        title="Gestão fiscal" 
+        onBackClick={() => console.log('Back clicked')} 
+        onSettingsClick={signOut}
+      />
       
-      <CompanyInfo companyName="Anderson Design" onRefreshClick={openCompanySwitcherModal} />
+      <CompanyInfo 
+        companyName={company?.name || "Carregando..."} 
+        onRefreshClick={openCompanySwitcherModal} 
+      />
       
       <main className="w-full h-[1400px] relative">
         <div className="w-full h-full relative">
@@ -320,7 +216,7 @@ function Index() {
           
           <div className="pb-8 w-full">
             <DiscountGrid 
-              title={discountGridTitle} 
+              title="Principais descontos" 
               discounts={currentDiscounts} 
               onDiscountClick={handleDiscountClick}
             />
@@ -329,14 +225,14 @@ function Index() {
       </main>
       
       <TransactionSheet 
-        month="Maio 2025" 
-        incomeTotal="R$ 10,500,00" 
-        expenseTotal="R$ 4.017,18" 
+        month={months[currentMonth]}
+        incomeTotal={formatCurrency(totalIncome)}
+        expenseTotal={formatCurrency(totalExpense)}
         incomeTransactions={currentIncomeTransactions} 
         expenseTransactions={currentExpenseTransactions} 
-        entryTotal="R$ 10.500,00" 
-        exitTotal="R$ 4.017,18" 
-        balance="R$ 6.482,82" 
+        entryTotal={formatCurrency(totalIncome)}
+        exitTotal={formatCurrency(totalExpense)}
+        balance={formatCurrency(balance)}
         onAddTransaction={handleAddTransaction} 
         onTransactionClick={handleTransactionClick}
         showStatus={activeTab === 'fechamento'}
@@ -362,4 +258,5 @@ function Index() {
       />
     </div>;
 }
+
 export default Index;
