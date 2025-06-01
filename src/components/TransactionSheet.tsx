@@ -124,7 +124,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
               </div>
               
-              <div className="flex justify-between items-center w-full px-0">
+              <div className="flex justify-between items-center w-full px-0 mb-4">
                 <div className="flex flex-col items-start">
                   <h3 className="text-[#43464D] tracking-[0.16px] font-bold text-sm">
                     Saldo do mês anterior
