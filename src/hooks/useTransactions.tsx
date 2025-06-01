@@ -2,24 +2,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { Database } from '@/integrations/supabase/types';
 
-interface Transaction {
-  id: string;
-  company_id: string;
-  title: string;
-  description: string | null;
-  amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  status: 'pending' | 'completed';
-  month: number;
-  year: number;
-  due_date: string | null;
-  payment_date: string | null;
-  is_auto_generated: boolean;
-  created_at: string;
-  updated_at: string;
-}
+type Transaction = Database['public']['Tables']['transactions']['Row'];
+type TransactionInsert = Database['public']['Tables']['transactions']['Insert'];
+type TransactionUpdate = Database['public']['Tables']['transactions']['Update'];
 
 export const useTransactions = (companyId: string | null) => {
   const { user } = useAuth();
@@ -54,7 +41,7 @@ export const useTransactions = (companyId: string | null) => {
     description?: string;
     amount: number;
     type: 'income' | 'expense';
-    category: string;
+    category: Database['public']['Enums']['transaction_category'];
     status?: 'pending' | 'completed';
     month: number;
     year: number;
@@ -65,14 +52,24 @@ export const useTransactions = (companyId: string | null) => {
     if (!companyId) return { error: 'Company not selected' };
 
     try {
+      const insertData: TransactionInsert = {
+        company_id: companyId,
+        title: transactionData.title,
+        description: transactionData.description || null,
+        amount: transactionData.amount,
+        type: transactionData.type,
+        category: transactionData.category,
+        status: transactionData.status || 'pending',
+        month: transactionData.month,
+        year: transactionData.year,
+        due_date: transactionData.due_date || null,
+        payment_date: transactionData.payment_date || null,
+        is_auto_generated: transactionData.is_auto_generated || false
+      };
+
       const { data, error } = await supabase
         .from('transactions')
-        .insert([{
-          company_id: companyId,
-          ...transactionData,
-          status: transactionData.status || 'pending',
-          is_auto_generated: transactionData.is_auto_generated || false
-        }])
+        .insert([insertData])
         .select()
         .single();
 
@@ -85,7 +82,7 @@ export const useTransactions = (companyId: string | null) => {
     }
   };
 
-  const updateTransaction = async (id: string, updates: Partial<Transaction>) => {
+  const updateTransaction = async (id: string, updates: TransactionUpdate) => {
     try {
       const { data, error } = await supabase
         .from('transactions')
@@ -133,51 +130,55 @@ export const useTransactions = (companyId: string | null) => {
     if (!companyId) return { error: 'Company not selected' };
 
     try {
-      const autoTransactions = [
+      const autoTransactions: TransactionInsert[] = [
         // Receita
         {
+          company_id: companyId,
           title: 'Salário',
           description: `Receita de ${month}/${year}`,
           amount: totalRevenue,
-          type: 'income' as const,
+          type: 'income',
           category: 'salary',
-          status: 'completed' as const,
+          status: 'completed',
           month,
           year,
           is_auto_generated: true
         },
         // Pró-labore
         {
+          company_id: companyId,
           title: 'Pró-labore',
           description: `Referente a ${month}/${year}`,
           amount: calculatedTaxes.pro_labore_amount,
-          type: 'expense' as const,
+          type: 'expense',
           category: 'pro_labore',
-          status: 'completed' as const,
+          status: 'completed',
           month,
           year,
           is_auto_generated: true
         },
         // INSS
         {
+          company_id: companyId,
           title: 'INSS',
           description: `Referente a ${month}/${year}`,
           amount: calculatedTaxes.inss_amount,
-          type: 'expense' as const,
+          type: 'expense',
           category: 'inss',
-          status: 'pending' as const,
+          status: 'pending',
           month: month + 1 > 12 ? 1 : month + 1,
           year: month + 1 > 12 ? year + 1 : year,
           is_auto_generated: true
         },
         // DAS
         {
+          company_id: companyId,
           title: 'DAS - Simples nacional',
           description: `Referente a ${month}/${year}`,
           amount: calculatedTaxes.das_amount,
-          type: 'expense' as const,
+          type: 'expense',
           category: 'das',
-          status: 'pending' as const,
+          status: 'pending',
           month: month + 1 > 12 ? 1 : month + 1,
           year: month + 1 > 12 ? year + 1 : year,
           is_auto_generated: true
@@ -187,12 +188,13 @@ export const useTransactions = (companyId: string | null) => {
       // Adicionar taxa de contabilidade se configurada
       if (accountingFee && accountingFee > 0) {
         autoTransactions.push({
+          company_id: companyId,
           title: 'Taxa de Contabilidade',
           description: `Referente a ${month}/${year}`,
           amount: accountingFee,
-          type: 'expense' as const,
+          type: 'expense',
           category: 'accounting',
-          status: 'pending' as const,
+          status: 'pending',
           month,
           year,
           is_auto_generated: true
