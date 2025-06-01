@@ -16,6 +16,7 @@ import { CompanySetupModal } from "@/components/CompanySetupModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useFinancialData } from "@/hooks/useFinancialData";
+import { TransactionCreateModal } from "@/components/TransactionCreateModal";
 
 // Define transaction types
 interface IncomeTransactionWithStatus {
@@ -52,6 +53,7 @@ function Index() {
   const [bottomNavTab, setBottomNavTab] = useState('documents');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   
   const months = ['JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'];
 
@@ -89,7 +91,17 @@ function Index() {
   };
 
   const handleAddTransaction = () => {
-    console.log('Add transaction clicked');
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateTransaction = async (newTransaction: any) => {
+    await createTransaction(currentMonth + 1, currentYear, newTransaction);
+    setIsCreateModalOpen(false);
+  };
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    await deleteTransaction(transactionId);
+    setIsEditModalOpen(false);
   };
 
   const handleDiscountClick = (discount: any) => {
@@ -335,8 +347,20 @@ function Index() {
       <TransactionEditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        transaction={selectedTransaction}
+        transaction={selectedTransaction ? {
+          ...selectedTransaction,
+          amount: typeof selectedTransaction.amount === 'string' 
+            ? parseFloat(selectedTransaction.amount.replace(/[R$\s.]/g, '').replace(',', '.'))
+            : selectedTransaction.amount
+        } : null}
         onSave={handleSaveTransaction}
+        onDelete={handleDeleteTransaction}
+      />
+
+      <TransactionCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSave={handleCreateTransaction}
       />
 
       <CompanySwitcherModal
