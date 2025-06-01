@@ -33,18 +33,22 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
     ? amount.replace('R$', '+')
     : amount.replace('R$', '-');
 
-  const handleStatusClick = () => {
+  const handleStatusClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (onStatusChange) {
       const newStatus = status === 'completed' ? 'pending' : 'completed';
       onStatusChange(newStatus);
     }
   };
 
+  const handleTransactionClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <button
-      onClick={onClick}
-      className="flex justify-between items-center w-full text-left hover:bg-gray-50 transition-colors"
-    >
+    <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-4 flex-1">
         {showStatus ? (
           <TransactionStatus 
@@ -55,21 +59,27 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
         ) : (
           <DocumentIcon className="w-6 h-6 flex-shrink-0" />
         )}
-        <div className="flex flex-col items-start">
+        <button
+          onClick={handleTransactionClick}
+          className="flex flex-col items-start flex-1 text-left"
+        >
           <h3 className="text-[#43464D] font-bold text-lg tracking-[0.16px] max-sm:text-base">
             {title}
           </h3>
           <p className="text-[#5E626C] font-medium text-sm tracking-[0.12px] max-sm:text-xs">
             {description}
           </p>
-        </div>
+        </button>
       </div>
-      <div className="flex items-center gap-1">
+      <button
+        onClick={handleTransactionClick}
+        className="flex items-center gap-1"
+      >
         <span className={`text-base font-extrabold tracking-[0.01em] max-sm:text-sm ${gradientClass}`}>
           {displayAmount}
         </span>
         <ChevronRightIcon className="w-6 h-6" />
-      </div>
-    </button>
+      </button>
+    </div>
   );
 };

@@ -138,7 +138,7 @@ function Index() {
     type: 'expense' as const
   }];
 
-  // State for fechamento transactions with status
+  // State for fechamento transactions with status - agrupados por data
   const [fechamentoIncomeTransactions, setFechamentoIncomeTransactions] = useState<IncomeTransactionWithStatus[]>([{
     id: '1',
     title: 'Salário',
@@ -164,7 +164,7 @@ function Index() {
     amount: 'R$ 630,00',
     type: 'expense',
     status: 'pending',
-    date: '25 de Jun 2025'
+    date: '20 de Jun 2025'
   }, {
     id: '4',
     title: 'INSS',
@@ -172,7 +172,7 @@ function Index() {
     amount: 'R$ 324,55',
     type: 'expense',
     status: 'pending',
-    date: '25 de Jun 2025'
+    date: '20 de Jun 2025'
   }, {
     id: '5',
     title: 'Despesas',
@@ -180,7 +180,7 @@ function Index() {
     amount: 'R$ 112,13',
     type: 'expense',
     status: 'completed',
-    date: '25 de Jun 2025'
+    date: '20 de Jun 2025'
   }]);
 
   const handleMonthChange = (monthIndex: number) => {

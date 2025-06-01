@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TransactionItem } from './TransactionItem';
 import { PlusIcon } from './icons';
@@ -86,19 +87,30 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
           </header>
           
           <div className="flex flex-col items-start gap-6 w-full">
-            {/* Saldo inicial */}
-            <div className="flex flex-col items-start gap-[5px] w-full">
-              <div className="flex justify-between items-center w-full">
-                <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
-                  Saldo inicial
-                </span>
-                <div className="flex items-center gap-1">
-                  <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
-                    {initialBalance}
+            {/* Saldo inicial com melhor exibição */}
+            <div className="flex flex-col items-start gap-4 w-full">
+              <div className="flex flex-col items-start gap-[5px] w-full">
+                <div className="flex justify-between items-center w-full">
+                  <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
+                    Saldo inicial
                   </span>
                 </div>
+                <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
               </div>
-              <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
+              
+              <div className="flex justify-between items-center w-full px-2">
+                <div className="flex flex-col items-start">
+                  <h3 className="text-[#43464D] font-bold text-lg tracking-[0.16px] max-sm:text-base">
+                    Saldo do mês anterior
+                  </h3>
+                  <p className="text-[#5E626C] font-medium text-sm tracking-[0.12px] max-sm:text-xs">
+                    Maio 2025
+                  </p>
+                </div>
+                <span className="text-base font-extrabold tracking-[0.01em] max-sm:text-sm bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent">
+                  {initialBalance}
+                </span>
+              </div>
             </div>
 
             {/* Transactions grouped by date */}
