@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface UsePullToRefreshProps {
   onRefresh: () => Promise<void> | void;
