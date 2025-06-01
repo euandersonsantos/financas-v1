@@ -1,82 +1,80 @@
 
+import { Transaction, Discount } from '@/types/transaction';
+
 export const MONTHS = [
-  'JAN 25', 'FEV 25', 'MAR 25', 'ABR 25', 'MAI 25', 'JUN 25', 
-  'JUL 25', 'AGO 25', 'SET 25', 'OUT 25', 'NOV 25', 'DEZ 25', 
-  'JAN 26', 'FEV 26', 'MAR 26', 'ABR 26', 'MAI 26', 'JUN 26'
+  "JAN 25", "FEV 25", "MAR 25", "ABR 25", 
+  "MAI 25", "JUN 25", "JUL 25", "AGO 25", 
+  "SET 25", "OUT 25", "NOV 25", "DEZ 25"
 ];
 
-export const MOCK_DISCOUNTS = [
+export const MOCK_DISCOUNTS: Discount[] = [
   {
-    id: '1',
-    title: 'Pró-Labore',
-    amount: 'R$ 2.950,50',
-    description: '100% do faturamento',
-    fontWeight: 'bold' as const,
-    type: 'expense' as const
+    id: "1",
+    title: "INSS",
+    amount: "R$ 1.302,00",
+    description: "Desconto previdenciário",
+    fontWeight: "bold"
   },
   {
-    id: '2',
-    title: 'DAS - SN',
-    amount: 'R$ 630,00',
-    description: '6% do faturamento',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
+    id: "2", 
+    title: "IRRF",
+    amount: "R$ 892,50",
+    description: "Imposto de renda retido na fonte",
+    fontWeight: "extrabold"
   },
   {
-    id: '3',
-    title: 'INSS',
-    amount: 'R$ 324,55',
-    description: '11% do pró-labore',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
+    id: "3",
+    title: "ISS",
+    amount: "R$ 525,00", 
+    description: "Imposto sobre serviços",
+    fontWeight: "bold"
   },
   {
-    id: '4',
-    title: 'Despesas',
-    amount: 'R$ 112,13',
-    description: 'Outras despesas',
-    fontWeight: 'extrabold' as const,
-    type: 'expense' as const
+    id: "4",
+    title: "PIS/COFINS",
+    amount: "R$ 315,75",
+    description: "Contribuições sociais",
+    fontWeight: "bold"
   }
 ];
 
-export const MOCK_INCOME_TRANSACTIONS = [
+export const MOCK_INCOME_TRANSACTIONS: Transaction[] = [
   {
-    id: '1',
-    title: 'Salário',
-    description: 'Sensorama Design',
-    amount: 'R$ 10.500,00',
-    type: 'income' as const
+    id: "income-1",
+    title: "Projeto Website",
+    description: "Desenvolvimento de site corporativo",
+    amount: "R$ 8.500,00",
+    type: "income"
+  },
+  {
+    id: "income-2", 
+    title: "Consultoria UX",
+    description: "Consultoria em experiência do usuário",
+    amount: "R$ 2.000,00",
+    type: "income"
   }
 ];
 
-export const MOCK_EXPENSE_TRANSACTIONS = [
+export const MOCK_EXPENSE_TRANSACTIONS: Transaction[] = [
   {
-    id: '1',
-    title: 'Pró-labore',
-    description: '100% do faturamento',
-    amount: 'R$ 2.950,50',
-    type: 'expense' as const
+    id: "expense-1",
+    title: "Software Adobe",
+    description: "Assinatura mensal Creative Cloud",
+    amount: "R$ 180,00",
+    type: "expense"
   },
   {
-    id: '2',
-    title: 'DAS - Simples nacional',
-    description: '6% do faturamento',
-    amount: 'R$ 630,00',
-    type: 'expense' as const
+    id: "expense-2",
+    title: "Hospedagem",
+    description: "Servidor e domínio",
+    amount: "R$ 89,90", 
+    type: "expense"
   },
   {
-    id: '3',
-    title: 'INSS',
-    description: '11% do pro-labore',
-    amount: 'R$ 324,55',
-    type: 'expense' as const
-  },
-  {
-    id: '4',
-    title: 'Despesas',
-    description: 'Outras despesas',
-    amount: 'R$ 112,13',
-    type: 'expense' as const
+    id: "expense-3",
+    title: "Internet",
+    description: "Plano de internet fibra",
+    amount: "R$ 120,00",
+    type: "expense"
   }
 ];
