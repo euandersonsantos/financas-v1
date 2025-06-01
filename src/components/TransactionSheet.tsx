@@ -158,9 +158,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
               <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
               <div className="flex flex-col items-start gap-2">
                 <div className="flex flex-col items-start">
-                  <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
-                    Saldo
-                  </span>
+                  <span className="text-[#43464D] font-medium tracking-[0.14px] text-base">Saldo final</span>
                   <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                     {balance}
                   </span>
