@@ -26,6 +26,36 @@ interface TransactionSheetProps {
   initialBalance?: string;
   onStatusChange?: (transactionId: string, newStatus: 'pending' | 'completed') => void;
 }
+
+// Helper function to calculate daily balance
+const calculateDailyBalance = (date: string, transactions: Transaction[], initialBalance: string) => {
+  // Convert initial balance from "R$ 5.000,00" to number
+  const initial = parseFloat(initialBalance.replace('R$ ', '').replace('.', '').replace(',', '.'));
+  
+  // Get all transactions up to this date
+  const allDates = ['20 de Jun 2025', '25 de Jun 2025'];
+  const dateIndex = allDates.indexOf(date);
+  
+  let balance = initial;
+  
+  // Calculate balance up to the current date
+  for (let i = 0; i <= dateIndex; i++) {
+    const dateTransactions = transactions.filter(t => t.date === allDates[i]);
+    
+    dateTransactions.forEach(transaction => {
+      const amount = parseFloat(transaction.amount.replace('R$ ', '').replace('.', '').replace(',', '.'));
+      if (transaction.type === 'income') {
+        balance += amount;
+      } else {
+        balance -= amount;
+      }
+    });
+  }
+  
+  // Format back to Brazilian currency
+  return `R$ ${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
 export const TransactionSheet: React.FC<TransactionSheetProps> = ({
   month,
   incomeTotal,
@@ -60,8 +90,17 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
       acc[date].push(transaction);
       return acc;
     }, {} as Record<string, Transaction[]>);
-    return grouped;
+
+    // Sort dates: 20 de Jun 2025 should come before 25 de Jun 2025
+    const sortedEntries = Object.entries(grouped).sort(([dateA], [dateB]) => {
+      const dayA = parseInt(dateA.split(' ')[0]);
+      const dayB = parseInt(dateB.split(' ')[0]);
+      return dayA - dayB;
+    });
+
+    return Object.fromEntries(sortedEntries);
   })() : {};
+
   if (isClosingTab) {
     return <section className="absolute w-full flex flex-col items-center bg-white h-[700px] pt-6 pb-[122px] px-4 rounded-[24px_24px_0px_0px] left-0 bottom-[82px] z-10 sm:px-[21px]">
         <div className="flex w-full flex-col items-end gap-6 max-w-[360px]">
@@ -84,7 +123,12 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="flex flex-col items-start gap-4 w-full">
               <div className="flex flex-col items-start gap-[5px] w-full">
                 <div className="flex justify-between items-center w-full">
-                  
+                  <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
+                    Saldo inicial
+                  </span>
+                  <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
+                    {initialBalance}
+                  </span>
                 </div>
                 <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
               </div>
@@ -105,11 +149,17 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             </div>
 
             {/* Transactions grouped by date */}
-            {Object.entries(groupedTransactions).map(([date, transactions]) => <div key={date} className="flex flex-col items-start gap-4 w-full">
+            {Object.entries(groupedTransactions).map(([date, transactions]) => {
+              const dailyBalance = calculateDailyBalance(date, [...incomeTransactions, ...expenseTransactions], initialBalance);
+              
+              return <div key={date} className="flex flex-col items-start gap-4 w-full">
                 <div className="flex flex-col items-start gap-[5px] w-full">
                   <div className="flex justify-between items-center w-full">
                     <span className="text-[#5E626C] font-medium text-xs tracking-[0.1px]">
                       {date}
+                    </span>
+                    <span className="text-[#5E626C] font-bold text-xs tracking-[0.1px]">
+                      Saldo {dailyBalance}
                     </span>
                   </div>
                   <div className="w-full h-px bg-[rgba(0,0,0,0.08)]" />
@@ -118,7 +168,8 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
                 <div className="flex flex-col gap-4 w-full">
                   {transactions.map(transaction => <TransactionItem key={transaction.id} title={transaction.title} description={transaction.description} amount={transaction.amount} type={transaction.type} onClick={() => handleTransactionClick(transaction)} showStatus={showStatus} status={transaction.status} onStatusChange={newStatus => handleStatusChange(transaction.id, newStatus)} />)}
                 </div>
-              </div>)}
+              </div>
+            })}
             
             {/* ... keep existing code (resultado section) */}
             <div className="flex flex-col items-start gap-[5px] w-full">
@@ -156,7 +207,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
               <div className="w-5 h-0 bg-[rgba(0,0,0,0.08)] sm:w-9" />
               <div className="flex flex-col items-start gap-2">
                 <div className="flex flex-col items-start">
-                  <span className="text-[#43464D] font-medium tracking-[0.14px] text-base">Saldo</span>
+                  <span className="text-[#43464D] font-medium tracking-[0.14px] text-base">Saldo total</span>
                   <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                     {balance}
                   </span>
@@ -264,7 +315,7 @@ export const TransactionSheet: React.FC<TransactionSheetProps> = ({
             <div className="flex flex-col items-start gap-2">
               <div className="flex flex-col items-start">
                 <span className="text-[#43464D] font-medium text-base tracking-[0.14px] max-sm:text-sm">
-                  Saldo
+                  Saldo total
                 </span>
                 <span className="font-bold text-base tracking-[0.14px] bg-gradient-to-r from-[#78B60F] to-[#6D96E4] bg-clip-text text-transparent max-sm:text-sm">
                   {balance}
